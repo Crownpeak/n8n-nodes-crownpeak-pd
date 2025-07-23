@@ -17,7 +17,7 @@ export class CrownpeakPD implements INodeType {
     icon: "file:crownpeak.svg",
     group: ["input"],
     version: 1,
-    subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+    subtitle: '={{$parameter["operation"]}}',
     description: "Interact with CrownPeak PD API",
     defaults: {
       name: "CrownPeak PD",
