@@ -59,6 +59,45 @@ export class CrownpeakPD implements INodeType {
         default: "createProduct",
       },
       {
+        displayName: "Tenant",
+        name: "tenant",
+        type: "string",
+        default: "solutions",
+        description: "Tenant identifier (e.g., solutions)",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createProduct"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "environment",
+        type: "string",
+        default: "cidp-test",
+        description: "Environment name (e.g., cidp-test, production)",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createProduct"],
+          },
+        },
+      },
+      {
+        displayName: "FHR Validation",
+        name: "fhrValidation",
+        type: "boolean",
+        default: false,
+        description: "Enable FHR validation?",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createProduct"],
+          },
+        },
+      },
+      {
         displayName: "Product Data",
         name: "contentData",
         type: "string",
@@ -125,11 +164,11 @@ export class CrownpeakPD implements INodeType {
 
         switch (operation) {
           case "createProduct": {
-            const productData = this.getNodeParameter(
-              "contentData",
-              i
-            ) as string;
-            const url = "https://api.crownpeak.net/pd/products";
+            const productData = this.getNodeParameter("contentData", i) as string;
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
