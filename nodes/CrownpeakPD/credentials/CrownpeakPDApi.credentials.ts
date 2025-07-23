@@ -1,53 +1,41 @@
-import {
-	IAuthenticateGeneric,
-	ICredentialTestRequest,
-	ICredentialType,
-	INodeProperties,
-} from 'n8n-workflow';
+import { ICredentialType, INodeProperties } from "n8n-workflow";
 
 export class CrownpeakPDApi implements ICredentialType {
-	name = 'crownpeakPDApi';
-	displayName = 'CIDP API (Manual Bearer Token)';
-	documentationUrl = 'https://items.attraqt.io/docs';
-	properties: INodeProperties[] = [
-		{
-			displayName: 'API Endpoint',
-			name: 'apiEndpoint',
-			type: 'string',
-			default: 'https://items.attraqt.io',
-			placeholder: 'https://items.attraqt.io',
-			description: 'The CIDP API endpoint URL',
-			required: true,
-		},
-		{
-			displayName: 'Bearer Token',
-			name: 'bearerToken',
-			type: 'string',
-			typeOptions: {
-				password: true,
-			},
-			default: '',
-			placeholder: 'Paste your Bearer token here',
-			description: 'The Bearer token for CIDP API (copy from Postman)',
-			required: true,
-		},
-	];
-
-	authenticate: IAuthenticateGeneric = {
-		type: 'generic',
-		properties: {
-			headers: {
-				'Authorization': '=Bearer {{$credentials.bearerToken}}',
-				'Content-Type': 'application/json',
-			},
-		},
-	};
-
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '={{$credentials.apiEndpoint}}',
-			url: '/items',
-			method: 'GET',
-		},
-	};
+  name = "crownpeakPDApi";
+  displayName = "CrownPeak PD API";
+  documentationUrl = "";
+  properties: INodeProperties[] = [
+    {
+      displayName: "Username",
+      name: "username",
+      type: "string",
+      default: "",
+      placeholder: "Enter your username",
+      description: "The username for basic authentication",
+      required: true,
+    },
+    {
+      displayName: "Password",
+      name: "password",
+      type: "string",
+      typeOptions: {
+        password: true,
+      },
+      default: "",
+      placeholder: "Enter your password",
+      description: "The password for basic authentication",
+      required: true,
+    },
+    {
+      displayName: "Auth URL",
+      name: "authUrl",
+      type: "string",
+      default:
+        "https://iam.attraqt.io/auth/realms/solutions/protocol/openid-connect/token",
+      placeholder:
+        "https://iam.attraqt.io/auth/realms/solutions/protocol/openid-connect/token",
+      description: "The OAuth2 token endpoint URL",
+      required: true,
+    },
+  ];
 }

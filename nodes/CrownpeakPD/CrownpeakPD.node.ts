@@ -1,117 +1,164 @@
 import {
-	IDataObject,
-	INodeExecutionData,
-	INodeType,
-	INodeTypeDescription,
-	NodeConnectionType,
-	IExecuteFunctions,
-	IHttpRequestMethods,
-	NodeOperationError,
-	IHttpRequestOptions,
-} from 'n8n-workflow';
-
-import { crownpeakPDOperations, crownpeakPDFields } from './descriptions/CrownpeakPD.node.options';
+  IDataObject,
+  INodeExecutionData,
+  INodeType,
+  INodeTypeDescription,
+  NodeConnectionType,
+  IExecuteFunctions,
+  IHttpRequestMethods,
+  NodeOperationError,
+  IHttpRequestOptions,
+} from "n8n-workflow";
 
 export class CrownpeakPD implements INodeType {
-	description: INodeTypeDescription = {
-		displayName: 'CrownPeak PD',
-		name: 'crownpeakPD',
-		icon: 'file:crownpeak.svg',
-		group: ['input'],
-		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with CrownPeak PD API',
-		defaults: {
-			name: 'CrownPeak PD',
-		},
-		inputs: [NodeConnectionType.Main],
-		outputs: [NodeConnectionType.Main],
-		credentials: [
-			{
-				name: 'crownpeakPDApi',
-				required: true,
-			},
-		],
-		requestDefaults: {
-			baseURL: '={{$credentials.apiEndpoint}}',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-		},
-		properties: [
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'Content',
-						value: 'content',
-						description: 'Work with content items',
-					},
-				],
-				default: 'content',
-			},
-			...crownpeakPDOperations,
-			...crownpeakPDFields,
-		],
-	};
+  description: INodeTypeDescription = {
+    displayName: "CrownPeak PD",
+    name: "crownpeakPD",
+    icon: "file:crownpeak.svg",
+    group: ["input"],
+    version: 1,
+    subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+    description: "Interact with CrownPeak PD API",
+    defaults: {
+      name: "CrownPeak PD",
+    },
+    inputs: [NodeConnectionType.Main],
+    outputs: [NodeConnectionType.Main],
+    credentials: [
+      {
+        name: "crownpeakPDApi",
+        required: true,
+      },
+    ],
+    requestDefaults: {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    },
+    properties: [
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        options: [
+          {
+            name: "Create Product",
+            value: "createProduct",
+            description: "Create a new product item",
+            action: "Create product",
+          },
+        ],
+        default: "createProduct",
+      },
+      {
+        displayName: "Product Data",
+        name: "contentData",
+        type: "string",
+        required: true,
+        default: "",
+        description: "The data for the product item (JSON or text)",
+        displayOptions: {
+          show: {
+            operation: ["createProduct"],
+          },
+        },
+      },
+    ],
+  };
 
-	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const items = this.getInputData();
-		const returnData: IDataObject[] = [];
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    const items = this.getInputData();
+    const returnData: IDataObject[] = [];
 
-		for (let i = 0; i < items.length; i++) {
-			try {
-				const resource = this.getNodeParameter('resource', i) as string;
-				const operation = this.getNodeParameter('operation', i) as string;
+    async function getBearerToken(self: IExecuteFunctions): Promise<string> {
+      const credentials = await self.getCredentials("crownpeakPDApi");
+      const username = credentials.username as string;
+      const password = credentials.password as string;
+      const authUrl = credentials.authUrl as string;
+      const basicAuth = Buffer.from(`${username}:${password}`).toString(
+        "base64"
+      );
+      const options: IHttpRequestOptions = {
+        method: "POST",
+        url: authUrl,
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "grant_type=client_credentials",
+      };
+      try {
+        const response = await self.helpers.request(options);
+        const tokenData =
+          typeof response === "string" ? JSON.parse(response) : response;
+        if (!tokenData.access_token) {
+          throw new NodeOperationError(
+            self.getNode(),
+            "Failed to obtain access token"
+          );
+        }
+        return tokenData.access_token;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Unknown authentication error";
+        throw new NodeOperationError(
+          self.getNode(),
+          `Authentication failed: ${errorMessage}`
+        );
+      }
+    }
 
-				let responseData: IDataObject = {};
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const operation = this.getNodeParameter("operation", i) as string;
+        let responseData: IDataObject = {};
 
-				if (resource === 'content') {
-					switch (operation) {
-						case 'post': {
-							const tenant = this.getNodeParameter('tenant', i) as string;
-							const environment = this.getNodeParameter('environment', i) as string;
-							const fhrValidation = this.getNodeParameter('fhrValidation', i) as boolean;
-							const itemsParam = this.getNodeParameter('items', i) as any;
-							const url = `/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
-							let body: any = itemsParam;
-							if (typeof itemsParam === 'string') {
-								try {
-									body = JSON.parse(itemsParam);
-								} catch (e) {
-									throw new NodeOperationError(this.getNode(), 'Items must be a valid JSON array');
-								}
-							}
-							const options: IHttpRequestOptions = {
-								method: 'POST',
-								url,
-								body,
-								json: true,
-							};
-							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'crownpeakPDApi', options);
-							break;
-						}
-						default:
-							throw new NodeOperationError(this.getNode(), `The operation "${operation}" is not known!`);
-					}
-				}
+        switch (operation) {
+          case "createProduct": {
+            // Example: get parameters for the request
+            const productData = this.getNodeParameter(
+              "contentData",
+              i
+            ) as string;
+            const url = "https://api.crownpeak.net/pd/products"; // Example endpoint
+            // Get bearer token
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: productData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          default:
+            throw new NodeOperationError(
+              this.getNode(),
+              `The operation "${operation}" is not supported!`
+            );
+        }
 
-				returnData.push(responseData);
-			} catch (error) {
-				if (this.continueOnFail()) {
-					const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-					returnData.push({ error: errorMessage });
-					continue;
-				}
-				throw error;
-			}
-		}
+        returnData.push(responseData);
+      } catch (error) {
+        if (this.continueOnFail()) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Unknown error occurred";
+          returnData.push({ error: errorMessage });
+          continue;
+        }
+        throw error;
+      }
+    }
 
-		return [this.helpers.returnJsonArray(returnData)];
-	}
+    return [this.helpers.returnJsonArray(returnData)];
+  }
 }
-
