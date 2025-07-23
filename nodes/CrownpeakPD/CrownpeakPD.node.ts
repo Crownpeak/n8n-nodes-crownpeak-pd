@@ -49,6 +49,12 @@ export class CrownpeakPD implements INodeType {
             description: "Create a new product item",
             action: "Create product",
           },
+          {
+            name: "Get Token",
+            value: "getToken",
+            description: "Get authentication token response",
+            action: "Get token",
+          },
         ],
         default: "createProduct",
       },
@@ -119,13 +125,11 @@ export class CrownpeakPD implements INodeType {
 
         switch (operation) {
           case "createProduct": {
-            // Example: get parameters for the request
             const productData = this.getNodeParameter(
               "contentData",
               i
             ) as string;
-            const url = "https://api.crownpeak.net/pd/products"; // Example endpoint
-            // Get bearer token
+            const url = "https://api.crownpeak.net/pd/products";
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -138,6 +142,26 @@ export class CrownpeakPD implements INodeType {
               json: true,
             };
             responseData = await this.helpers.request(options);
+            break;
+          }
+          case "getToken": {
+            // Get credentials
+            const credentials = await this.getCredentials("crownpeakPDApi");
+            const username = credentials.username as string;
+            const password = credentials.password as string;
+            const authUrl = credentials.authUrl as string;
+            const basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url: authUrl,
+              headers: {
+                Authorization: `Basic ${basicAuth}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: "grant_type=client_credentials",
+            };
+            const response = await this.helpers.request(options);
+            responseData = typeof response === "string" ? JSON.parse(response) : response;
             break;
           }
           default:
