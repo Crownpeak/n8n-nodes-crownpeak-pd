@@ -20,7 +20,7 @@ export class CrownpeakPD implements INodeType {
 		group: ['input'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with CrownPeak PD CMS API',
+		description: 'Interact with CrownPeak PD API',
 		defaults: {
 			name: 'CrownPeak PD',
 		},
@@ -61,169 +61,57 @@ export class CrownpeakPD implements INodeType {
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
-		const returnData: INodeExecutionData[] = [];
-		const nodeClass = this.getNode() as any;
-
-		const resource = this.getNodeParameter('resource', 0);
-		const operation = this.getNodeParameter('operation', 0);
+		const returnData: IDataObject[] = [];
 
 		for (let i = 0; i < items.length; i++) {
 			try {
+				const resource = this.getNodeParameter('resource', i) as string;
+				const operation = this.getNodeParameter('operation', i) as string;
+
 				let responseData: IDataObject = {};
 
 				if (resource === 'content') {
 					switch (operation) {
-						case 'create':
-							responseData = await nodeClass.createContent(this, i);
+						case 'post': {
+							const tenant = this.getNodeParameter('tenant', i) as string;
+							const environment = this.getNodeParameter('environment', i) as string;
+							const fhrValidation = this.getNodeParameter('fhrValidation', i) as boolean;
+							const itemsParam = this.getNodeParameter('items', i) as any;
+							const url = `/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+							let body: any = itemsParam;
+							if (typeof itemsParam === 'string') {
+								try {
+									body = JSON.parse(itemsParam);
+								} catch (e) {
+									throw new NodeOperationError(this.getNode(), 'Items must be a valid JSON array');
+								}
+							}
+							const options: IHttpRequestOptions = {
+								method: 'POST',
+								url,
+								body,
+								json: true,
+							};
+							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'crownpeakPDApi', options);
 							break;
-						case 'get':
-							responseData = await nodeClass.getContent(this, i);
-							break;
-						case 'update':
-							responseData = await nodeClass.updateContent(this, i);
-							break;
-						case 'delete':
-							responseData = await nodeClass.deleteContent(this, i);
-							break;
-						case 'list':
-							responseData = await nodeClass.listContent(this, i);
-							break;
+						}
 						default:
 							throw new NodeOperationError(this.getNode(), `The operation "${operation}" is not known!`);
 					}
 				}
 
-				const executionData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray(responseData),
-					{ itemData: { item: i } },
-				);
-
-				returnData.push(...executionData);
+				returnData.push(responseData);
 			} catch (error) {
 				if (this.continueOnFail()) {
 					const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-					const executionErrorData = this.helpers.constructExecutionMetaData(
-						this.helpers.returnJsonArray({ error: errorMessage }),
-						{ itemData: { item: i } },
-					);
-					returnData.push(...executionErrorData);
+					returnData.push({ error: errorMessage });
 					continue;
 				}
 				throw error;
 			}
 		}
 
-		return [returnData];
-	}
-
-	private async createContent(
-		executeFunctions: IExecuteFunctions,
-		itemIndex: number,
-	): Promise<IDataObject> {
-		const title = executeFunctions.getNodeParameter('title', itemIndex) as string;
-		const content = executeFunctions.getNodeParameter('content', itemIndex) as string;
-		const templateId = executeFunctions.getNodeParameter('templateId', itemIndex) as string;
-		const folderId = executeFunctions.getNodeParameter('folderId', itemIndex) as string;
-		const additionalFields = executeFunctions.getNodeParameter('additionalFields', itemIndex) as IDataObject;
-
-		const body: IDataObject = {
-			title,
-			content,
-			templateId,
-			folderId,
-			...additionalFields,
-		};
-
-		const options: IHttpRequestOptions = {
-			method: 'POST',
-			url: '/api/v1/content',
-			body,
-			json: true,
-		};
-
-		return executeFunctions.helpers.httpRequestWithAuthentication.call(executeFunctions, 'crownpeakPDApi', options);
-	}
-
-	private async getContent(
-		executeFunctions: IExecuteFunctions,
-		itemIndex: number,
-	): Promise<IDataObject> {
-		const contentId = executeFunctions.getNodeParameter('contentId', itemIndex) as string;
-
-		const options: IHttpRequestOptions = {
-			method: 'GET',
-			url: `/api/v1/content/${contentId}`,
-			json: true,
-		};
-
-		return executeFunctions.helpers.httpRequestWithAuthentication.call(executeFunctions, 'crownpeakPDApi', options);
-	}
-
-	private async updateContent(
-		executeFunctions: IExecuteFunctions,
-		itemIndex: number,
-	): Promise<IDataObject> {
-		const contentId = executeFunctions.getNodeParameter('contentId', itemIndex) as string;
-		const title = executeFunctions.getNodeParameter('title', itemIndex) as string;
-		const content = executeFunctions.getNodeParameter('content', itemIndex) as string;
-		const additionalFields = executeFunctions.getNodeParameter('additionalFields', itemIndex) as IDataObject;
-
-		const body: IDataObject = {
-			title,
-			content,
-			...additionalFields,
-		};
-
-		const options: IHttpRequestOptions = {
-			method: 'PUT',
-			url: `/api/v1/content/${contentId}`,
-			body,
-			json: true,
-		};
-
-		return executeFunctions.helpers.httpRequestWithAuthentication.call(executeFunctions, 'crownpeakPDApi', options);
-	}
-
-	private async deleteContent(
-		executeFunctions: IExecuteFunctions,
-		itemIndex: number,
-	): Promise<IDataObject> {
-		const contentId = executeFunctions.getNodeParameter('contentId', itemIndex) as string;
-
-		const options: IHttpRequestOptions = {
-			method: 'DELETE',
-			url: `/api/v1/content/${contentId}`,
-			json: true,
-		};
-
-		return executeFunctions.helpers.httpRequestWithAuthentication.call(executeFunctions, 'crownpeakPDApi', options);
-	}
-
-	private async listContent(
-		executeFunctions: IExecuteFunctions,
-		itemIndex: number,
-	): Promise<IDataObject> {
-		const folderId = executeFunctions.getNodeParameter('folderId', itemIndex, '') as string;
-		const limit = executeFunctions.getNodeParameter('limit', itemIndex) as number;
-		const additionalFields = executeFunctions.getNodeParameter('additionalFields', itemIndex) as IDataObject;
-
-		const qs: IDataObject = {
-			limit,
-			...additionalFields,
-		};
-
-		if (folderId) {
-			qs.folderId = folderId;
-		}
-
-		const options: IHttpRequestOptions = {
-			method: 'GET',
-			url: '/api/v1/content',
-			qs,
-			json: true,
-		};
-
-		return executeFunctions.helpers.httpRequestWithAuthentication.call(executeFunctions, 'crownpeakPDApi', options);
+		return [this.helpers.returnJsonArray(returnData)];
 	}
 }
 
