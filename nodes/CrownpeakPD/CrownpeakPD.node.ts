@@ -50,6 +50,18 @@ export class CrownpeakPD implements INodeType {
             action: "Create product",
           },
           {
+            name: "Update Product",
+            value: "updateProduct",
+            description: "Update existing product item attributes",
+            action: "Update product",
+          },
+          {
+            name: "Delete Product",
+            value: "deleteProduct",
+            description: "Delete product item",
+            action: "Delete product",
+          },
+          {
             name: "Get Token",
             value: "getToken",
             description: "Get authentication token response",
@@ -67,7 +79,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct"],
+            operation: ["createProduct", "updateProduct", "deleteProduct"],
           },
         },
       },
@@ -80,7 +92,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct"],
+            operation: ["createProduct", "updateProduct", "deleteProduct"],
           },
         },
       },
@@ -93,7 +105,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct"],
+            operation: ["createProduct", "updateProduct"],
           },
         },
       },
@@ -103,10 +115,10 @@ export class CrownpeakPD implements INodeType {
         type: "string",
         required: true,
         default: "",
-        description: "The data for the product item (JSON or text)",
+        description: "The data for the product item (JSON format). For CREATE: full item data, for UPDATE: only attributes to update, for DELETE: item identification (id, catalogVersion, type)",
         displayOptions: {
           show: {
-            operation: ["createProduct"],
+            operation: ["createProduct", "updateProduct", "deleteProduct"],
           },
         },
       },
@@ -169,6 +181,45 @@ export class CrownpeakPD implements INodeType {
             const environment = this.getNodeParameter("environment", i) as string;
             const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
             const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: productData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "updateProduct": {
+            const productData = this.getNodeParameter("contentData", i) as string;
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "PATCH",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: productData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "deleteProduct": {
+            const productData = this.getNodeParameter("contentData", i) as string;
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const url = `https://items.attraqt.io/items/delete?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
