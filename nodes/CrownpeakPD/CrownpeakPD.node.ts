@@ -67,6 +67,30 @@ export class CrownpeakPD implements INodeType {
             description: "Get authentication token response",
             action: "Get token",
           },
+          {
+            name: "Create Item Schema",
+            value: "createItemSchema",
+            description: "Create a new item schema",
+            action: "Create item schema",
+          },
+          {
+            name: "Update Item Schema",
+            value: "updateItemSchema",
+            description: "Update an existing item schema",
+            action: "Update item schema",
+          },
+          {
+            name: "Delete Item Schema",
+            value: "deleteItemSchema",
+            description: "Delete an item schema",
+            action: "Delete item schema",
+          },
+          {
+            name: "Get Item Schema",
+            value: "getItemSchema",
+            description: "Get an item schema by name and version",
+            action: "Get item schema",
+          },
         ],
         default: "createProduct",
       },
@@ -119,6 +143,71 @@ export class CrownpeakPD implements INodeType {
         displayOptions: {
           show: {
             operation: ["createProduct", "updateProduct", "deleteProduct"],
+          },
+        },
+      },
+      {
+        displayName: "Tenant",
+        name: "schemaTenant",
+        type: "string",
+        default: "solutions",
+        description: "Tenant identifier for schema operations",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "schemaEnvironment",
+        type: "string",
+        default: "cidp-test",
+        description: "Environment name for schema operations",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema"],
+          },
+        },
+      },
+      {
+        displayName: "Schema Name",
+        name: "schemaName",
+        type: "string",
+        default: "",
+        description: "Name of the item schema",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["updateItemSchema", "deleteItemSchema", "getItemSchema"],
+          },
+        },
+      },
+      {
+        displayName: "Schema Version",
+        name: "schemaVersion",
+        type: "string",
+        default: "",
+        description: "Version of the item schema (required for delete and get operations)",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["deleteItemSchema", "getItemSchema"],
+          },
+        },
+      },
+      {
+        displayName: "Schema Data",
+        name: "schemaData",
+        type: "string",
+        required: true,
+        default: "",
+        description: "The schema definition (JSON format). Example: {\"name\": \"product\", \"attributes\": [{\"name\": \"title\", \"type\": \"TEXT\"}]}",
+        displayOptions: {
+          show: {
+            operation: ["createItemSchema", "updateItemSchema"],
           },
         },
       },
@@ -252,6 +341,83 @@ export class CrownpeakPD implements INodeType {
             };
             const response = await this.helpers.request(options);
             responseData = typeof response === "string" ? JSON.parse(response) : response;
+            break;
+          }
+          case "createItemSchema": {
+            const schemaData = this.getNodeParameter("schemaData", i) as string;
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const url = `https://items.attraqt.io/item-schemas?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: schemaData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "updateItemSchema": {
+            const schemaData = this.getNodeParameter("schemaData", i) as string;
+            const schemaName = this.getNodeParameter("schemaName", i) as string;
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "PUT",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: schemaData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "deleteItemSchema": {
+            const schemaName = this.getNodeParameter("schemaName", i) as string;
+            const schemaVersion = this.getNodeParameter("schemaVersion", i) as string;
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "getItemSchema": {
+            const schemaName = this.getNodeParameter("schemaName", i) as string;
+            const schemaVersion = this.getNodeParameter("schemaVersion", i) as string;
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
             break;
           }
           default:
