@@ -211,6 +211,22 @@ export class CrownpeakPD implements INodeType {
         },
       },
       {
+        displayName: "FHR Validation",
+        name: "categoryTreeFhrValidation",
+        type: "boolean",
+        default: false,
+        description: "Enable FHR (Fredhopper) validation for category names (alphanumerical characters only [A-Za-z0-9])",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: [
+              "createCategoryTree",
+              "updateCategoryTree",
+            ],
+          },
+        },
+      },
+      {
         displayName: "Category Tree Name",
         name: "categoryTreeName",
         type: "string",
@@ -818,7 +834,13 @@ export class CrownpeakPD implements INodeType {
             const categoryTreeData = this.getNodeParameter("categoryTreeData", i) as string;
             const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
             const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const fhrValidation = this.getNodeParameter("categoryTreeFhrValidation", i) as boolean;
+            
+            let url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            if (fhrValidation) {
+              url += "&fhrValidation=true";
+            }
+            
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -838,7 +860,13 @@ export class CrownpeakPD implements INodeType {
             const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
             const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
             const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const fhrValidation = this.getNodeParameter("categoryTreeFhrValidation", i) as boolean;
+            
+            let url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            if (fhrValidation) {
+              url += "&fhrValidation=true";
+            }
+            
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "PUT",
