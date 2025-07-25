@@ -91,6 +91,36 @@ export class CrownpeakPD implements INodeType {
             description: "Get an item schema by name and version",
             action: "Get item schema",
           },
+          {
+            name: "Create Catalog",
+            value: "createCatalog",
+            description: "Create a new catalog",
+            action: "Create catalog",
+          },
+          {
+            name: "Delete Catalog",
+            value: "deleteCatalog",
+            description: "Delete an inactive catalog",
+            action: "Delete catalog",
+          },
+          {
+            name: "Activate Catalog",
+            value: "activateCatalog",
+            description: "Activate a catalog version",
+            action: "Activate catalog",
+          },
+          {
+            name: "Get Active Catalog",
+            value: "getActiveCatalog",
+            description: "Get the currently active catalog version",
+            action: "Get active catalog",
+          },
+          {
+            name: "List Catalogs",
+            value: "listCatalogs",
+            description: "List all catalogs",
+            action: "List catalogs",
+          },
         ],
         default: "createProduct",
       },
@@ -211,6 +241,58 @@ export class CrownpeakPD implements INodeType {
           },
         },
       },
+      {
+        displayName: "Tenant",
+        name: "catalogTenant",
+        type: "string",
+        default: "solutions",
+        description: "Tenant identifier for catalog operations",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createCatalog", "deleteCatalog", "activateCatalog", "getActiveCatalog", "listCatalogs"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "catalogEnvironment",
+        type: "string",
+        default: "cidp-test",
+        description: "Environment name for catalog operations",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["createCatalog", "deleteCatalog", "activateCatalog", "getActiveCatalog", "listCatalogs"],
+          },
+        },
+      },
+      {
+        displayName: "Catalog Data",
+        name: "catalogData",
+        type: "string",
+        required: true,
+        default: "",
+        description: "The catalog definition (JSON format). Example: {\"catalogItemSchemas\": [{\"name\": \"product\", \"version\": 1}], \"catalogCategoryTrees\": [{\"name\": \"root_name\", \"version\": 2}]}",
+        displayOptions: {
+          show: {
+            operation: ["createCatalog"],
+          },
+        },
+      },
+      {
+        displayName: "Catalog Version",
+        name: "catalogVersion",
+        type: "string",
+        default: "",
+        description: "Version of the catalog (required for delete and activate operations)",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["deleteCatalog", "activateCatalog"],
+          },
+        },
+      },
     ],
   };
 
@@ -324,7 +406,6 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "getToken": {
-            // Get credentials
             const credentials = await this.getCredentials("crownpeakPDApi");
             const username = credentials.username as string;
             const password = credentials.password as string;
@@ -407,6 +488,126 @@ export class CrownpeakPD implements INodeType {
             const tenant = this.getNodeParameter("schemaTenant", i) as string;
             const environment = this.getNodeParameter("schemaEnvironment", i) as string;
             const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "createCatalog": {
+            const catalogData = this.getNodeParameter("catalogData", i) as string;
+            const tenant = this.getNodeParameter("catalogTenant", i) as string;
+            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
+            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: catalogData,
+              json: true,
+            };
+            
+            const response = await this.helpers.request(options);
+            const catalogVersion = response?.version || response?.catalogVersion || 'unknown';
+            responseData = {
+              success: true,
+              message: `Catalog created successfully with version ${catalogVersion}`,
+              catalogVersion: catalogVersion,
+              tenant: tenant,
+              environment: environment,
+              status: "inactive",
+              note: "New catalogs are created as inactive. Use 'Activate Catalog' to activate it.",
+              response: response
+            };
+            break;
+          }
+          case "deleteCatalog": {
+            const catalogVersion = this.getNodeParameter("catalogVersion", i) as string;
+            const tenant = this.getNodeParameter("catalogTenant", i) as string;
+            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
+            const url = `https://items.attraqt.io/catalogs/${encodeURIComponent(catalogVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: false,
+            };
+            
+            const response = await this.helpers.request(options);
+            responseData = {
+              success: true,
+              message: `Catalog version ${catalogVersion} deleted successfully`,
+              catalogVersion: catalogVersion,
+              tenant: tenant,
+              environment: environment,
+              response: response || "Catalog deleted successfully"
+            };
+            break;
+          }
+          case "activateCatalog": {
+            const catalogVersion = this.getNodeParameter("catalogVersion", i) as string;
+            const tenant = this.getNodeParameter("catalogTenant", i) as string;
+            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
+            const url = `https://items.attraqt.io/catalogs/activate/${encodeURIComponent(catalogVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: false,
+            };
+            
+            const response = await this.helpers.request(options);
+            responseData = {
+              success: true,
+              message: `Catalog version ${catalogVersion} activated successfully`,
+              catalogVersion: catalogVersion,
+              tenant: tenant,
+              environment: environment,
+              status: "active",
+              response: response || "Catalog activated successfully"
+            };
+            break;
+          }
+          case "getActiveCatalog": {
+            const tenant = this.getNodeParameter("catalogTenant", i) as string;
+            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
+            const url = `https://items.attraqt.io/catalogs/active?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "listCatalogs": {
+            const tenant = this.getNodeParameter("catalogTenant", i) as string;
+            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
+            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
