@@ -121,8 +121,115 @@ export class CrownpeakPD implements INodeType {
             description: "List all catalogs",
             action: "List catalogs",
           },
+          {
+            name: "Create Category Tree",
+            value: "createCategoryTree",
+            description: "Create a new category tree",
+            action: "Create category tree",
+          },
+          {
+            name: "Update Category Tree",
+            value: "updateCategoryTree",
+            description: "Update an existing category tree",
+            action: "Update category tree",
+          },
+          {
+            name: "List Category Trees",
+            value: "listCategoryTrees",
+            description: "List all category trees",
+            action: "List category trees",
+          },
+          {
+            name: "Get Category Tree",
+            value: "getCategoryTree",
+            description: "Get a category tree by name and version",
+            action: "Get category tree",
+          },
+          {
+            name: "Delete Category Tree",
+            value: "deleteCategoryTree",
+            description: "Delete a category tree",
+            action: "Delete category tree",
+          },
         ],
         default: "createProduct",
+      },
+      {
+        displayName: "Tenant",
+        name: "categoryTreeTenant",
+        type: "string",
+        default: "solutions",
+        description: "Tenant identifier for category tree operations",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: [
+              "createCategoryTree",
+              "updateCategoryTree",
+              "listCategoryTrees",
+              "getCategoryTree",
+              "deleteCategoryTree",
+            ],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "categoryTreeEnvironment",
+        type: "string",
+        default: "cidp-test",
+        description: "Environment name for category tree operations",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: [
+              "createCategoryTree",
+              "updateCategoryTree",
+              "listCategoryTrees",
+              "getCategoryTree",
+              "deleteCategoryTree",
+            ],
+          },
+        },
+      },
+      {
+        displayName: "Category Tree Name",
+        name: "categoryTreeName",
+        type: "string",
+        default: "",
+        description: "Name of the category tree",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["updateCategoryTree", "getCategoryTree", "deleteCategoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Category Tree Version",
+        name: "categoryTreeVersion",
+        type: "string",
+        default: "",
+        description: "Version of the category tree (required for get and delete operations)",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["getCategoryTree", "deleteCategoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Category Tree Data",
+        name: "categoryTreeData",
+        type: "string",
+        required: true,
+        default: "",
+        description: "The category tree definition (JSON format).",
+        displayOptions: {
+          show: {
+            operation: ["createCategoryTree", "updateCategoryTree"],
+          },
+        },
       },
       {
         displayName: "Tenant",
@@ -611,6 +718,100 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "createCategoryTree": {
+            const categoryTreeData = this.getNodeParameter("categoryTreeData", i) as string;
+            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
+            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
+            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: categoryTreeData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "updateCategoryTree": {
+            const categoryTreeData = this.getNodeParameter("categoryTreeData", i) as string;
+            const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
+            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
+            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
+            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "PUT",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: categoryTreeData,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "listCategoryTrees": {
+            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
+            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
+            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "getCategoryTree": {
+            const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
+            const categoryTreeVersion = this.getNodeParameter("categoryTreeVersion", i) as string;
+            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
+            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
+            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}/${encodeURIComponent(categoryTreeVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "deleteCategoryTree": {
+            const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
+            const categoryTreeVersion = this.getNodeParameter("categoryTreeVersion", i) as string;
+            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
+            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
+            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}/${encodeURIComponent(categoryTreeVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
