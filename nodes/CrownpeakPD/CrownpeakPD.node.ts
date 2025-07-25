@@ -151,6 +151,24 @@ export class CrownpeakPD implements INodeType {
             description: "Delete a category tree",
             action: "Delete category tree",
           },
+          {
+            name: "Set Default Locale",
+            value: "setDefaultLocale",
+            description: "Set the default locale for an item schema",
+            action: "Set default locale",
+          },
+          {
+            name: "Get Default Locale",
+            value: "getDefaultLocale",
+            description: "Get the default locale for an item schema",
+            action: "Get default locale",
+          },
+          {
+            name: "Delete Default Locale",
+            value: "deleteDefaultLocale",
+            description: "Delete the default locale for an item schema",
+            action: "Delete default locale",
+          },
         ],
         default: "createProduct",
       },
@@ -266,7 +284,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct", "updateProduct"],
+            operation: ["createProduct", "updateProduct", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -292,7 +310,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema"],
+            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -305,7 +323,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema"],
+            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -345,6 +363,19 @@ export class CrownpeakPD implements INodeType {
         displayOptions: {
           show: {
             operation: ["createItemSchema", "updateItemSchema"],
+          },
+        },
+      },
+      {
+        displayName: "Default Locale",
+        name: "defaultLocale",
+        type: "string",
+        default: "en",
+        description: "The locale code to set as default (e.g., 'en', 'fr', 'es', 'en_US', 'fr_FR'). Format: language_code or language_code_country_code",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["setDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -598,6 +629,61 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "setDefaultLocale": {
+            const defaultLocale = this.getNodeParameter("defaultLocale", i) as string;
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const url = `https://items.attraqt.io/locale/${encodeURIComponent(defaultLocale)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              body: "",
+              json: false,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "getDefaultLocale": {
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "deleteDefaultLocale": {
+            const tenant = this.getNodeParameter("schemaTenant", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
