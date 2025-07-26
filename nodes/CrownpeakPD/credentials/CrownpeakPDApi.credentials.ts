@@ -2,7 +2,7 @@ import { ICredentialType, INodeProperties } from "n8n-workflow";
 
 export class CrownpeakPDApi implements ICredentialType {
   name = "crownpeakPDApi";
-  displayName = "CrownPeak PD API";
+  displayName = "Fredhopper Product Discovery API";
   documentationUrl = "";
   properties: INodeProperties[] = [
     {

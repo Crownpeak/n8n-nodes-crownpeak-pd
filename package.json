@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-crownpeak-pd",
   "version": "1.1.0",
-  "description": "n8n integration for Crownpeak PD CMS API",
+  "description": "n8n integration for Fredhopper Product Discovery API",
   "keywords": [
     "n8n",
     "n8n-nodes",

@@ -137,4 +137,4 @@ export const crownpeakPDOperations: INodeProperties[] = [
     default: "createProduct",
   },
 ];
-export const defaults = { name: "Crownpeak PD Node" };
+export const defaults = { name: "Fredhopper Product Discovery Node" };

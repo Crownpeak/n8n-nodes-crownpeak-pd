@@ -12,15 +12,15 @@ import {
 
 export class CrownpeakPD implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "CrownPeak PD",
+    displayName: "Fredhopper Product Discovery",
     name: "crownpeakPD",
     icon: "file:crownpeak.svg",
     group: ["input"],
     version: 1,
     subtitle: '={{$parameter["operation"]}}',
-    description: "Interact with CrownPeak PD API",
+    description: "Interact with Fredhopper Product Discovery API",
     defaults: {
-      name: "CrownPeak PD",
+      name: "Fredhopper Product Discovery",
     },
     inputs: [NodeConnectionType.Main],
     outputs: [NodeConnectionType.Main],
