@@ -38,35 +38,107 @@ export class CrownpeakPD implements INodeType {
     },
     properties: [
       {
-        displayName: "Operation",
-        name: "operation",
+        displayName: "Resource",
+        name: "resource",
         type: "options",
         noDataExpression: true,
         options: [
           {
+            name: "Authentication",
+            value: "authentication",
+            description: "Authentication operations",
+          },
+          {
+            name: "Items",
+            value: "items",
+            description: "Product item operations",
+          },
+          {
+            name: "Item Schema",
+            value: "itemSchema",
+            description: "Item schema operations",
+          },
+          {
+            name: "Catalog",
+            value: "catalog",
+            description: "Catalog operations",
+          },
+          {
+            name: "Category Tree",
+            value: "categoryTree",
+            description: "Category tree operations",
+          },
+          {
+            name: "Locale",
+            value: "locale",
+            description: "Locale configuration operations",
+          },
+        ],
+        default: "items",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["authentication"],
+          },
+        },
+        options: [
+          {
+            name: "Get Token",
+            value: "getToken",
+            description: "Get authentication token response",
+            action: "Get authentication token",
+          },
+        ],
+        default: "getToken",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["items"],
+          },
+        },
+        options: [
+          {
             name: "Upsert Items",
             value: "upsertItems",
-            description: "Create a new product item",
+            description: "Create a new item",
             action: "Upsert items",
           },
           {
             name: "Patch Items",
             value: "patchItems",
-            description: "Update existing product item attributes",
+            description: "Update existing item attributes",
             action: "Patch items",
           },
           {
             name: "Delete Items",
             value: "deleteItems",
-            description: "Delete product item",
+            description: "Delete an item",
             action: "Delete items",
           },
-          {
-            name: "Get Token",
-            value: "getToken",
-            description: "Get authentication token response",
-            action: "Get token",
+        ],
+        default: "upsertItems",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["itemSchema"],
           },
+        },
+        options: [
           {
             name: "Create an Item Schema",
             value: "createItemSchema",
@@ -80,17 +152,31 @@ export class CrownpeakPD implements INodeType {
             action: "Update an item schema",
           },
           {
-            name: "Delete an Item Schema",
-            value: "deleteItemSchema",
-            description: "Delete an item schema",
-            action: "Delete an item schema",
-          },
-          {
             name: "Get an Item Schema",
             value: "getItemSchema",
             description: "Get an item schema by name and version",
             action: "Get an item schema",
           },
+          {
+            name: "Delete an Item Schema",
+            value: "deleteItemSchema",
+            description: "Delete an item schema",
+            action: "Delete an item schema",
+          },
+        ],
+        default: "createItemSchema",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["catalog"],
+          },
+        },
+        options: [
           {
             name: "Create a Catalog",
             value: "createCatalog",
@@ -98,16 +184,10 @@ export class CrownpeakPD implements INodeType {
             action: "Create a Catalog",
           },
           {
-            name: "Delete a Catalog",
-            value: "deleteCatalog",
-            description: "Delete an inactive catalog",
-            action: "Delete a Catalog",
-          },
-          {
-            name: "Activate a Catalog Version",
-            value: "activateCatalog",
-            description: "Activate a catalog version",
-            action: "Activate a Catalog Version",
+            name: "List Catalogs",
+            value: "listCatalogs",
+            description: "List all catalogs",
+            action: "List Catalogs",
           },
           {
             name: "Get Active Catalog Version",
@@ -116,11 +196,31 @@ export class CrownpeakPD implements INodeType {
             action: "Get Active Catalog Version",
           },
           {
-            name: "List Catalogs",
-            value: "listCatalogs",
-            description: "List all catalogs",
-            action: "List Catalogs",
+            name: "Activate a Catalog Version",
+            value: "activateCatalog",
+            description: "Activate a catalog version",
+            action: "Activate a Catalog Version",
           },
+          {
+            name: "Delete Catalog",
+            value: "deleteCatalog",
+            description: "Delete an inactive catalog",
+            action: "Delete a Catalog",
+          },
+        ],
+        default: "listCatalogs",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+          },
+        },
+        options: [
           {
             name: "Create a Category Tree",
             value: "createCategoryTree",
@@ -151,6 +251,20 @@ export class CrownpeakPD implements INodeType {
             description: "Delete a category tree",
             action: "Delete a Category Tree",
           },
+        ],
+        default: "listCategoryTrees",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["locale"],
+          },
+        },
+        options: [
           {
             name: "Set Default Locale",
             value: "setDefaultLocale",
@@ -170,100 +284,7 @@ export class CrownpeakPD implements INodeType {
             action: "Delete default locale",
           },
         ],
-        default: "upsertItems",
-      },
-      {
-        displayName: "Tenant",
-        name: "categoryTreeTenant",
-        type: "string",
-        default: "solutions",
-        description: "Tenant identifier for category tree operations",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: [
-              "createCategoryTree",
-              "updateCategoryTree",
-              "listCategoryTrees",
-              "getCategoryTree",
-              "deleteCategoryTree",
-            ],
-          },
-        },
-      },
-      {
-        displayName: "Environment",
-        name: "categoryTreeEnvironment",
-        type: "string",
-        default: "cidp-test",
-        description: "Environment name for category tree operations",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: [
-              "createCategoryTree",
-              "updateCategoryTree",
-              "listCategoryTrees",
-              "getCategoryTree",
-              "deleteCategoryTree",
-            ],
-          },
-        },
-      },
-      {
-        displayName: "FHR Validation",
-        name: "categoryTreeFhrValidation",
-        type: "boolean",
-        default: false,
-        description: "Enable FHR (Fredhopper) validation for category names (alphanumerical characters only [A-Za-z0-9])",
-        required: false,
-        displayOptions: {
-          show: {
-            operation: [
-              "createCategoryTree",
-              "updateCategoryTree",
-            ],
-          },
-        },
-      },
-      {
-        displayName: "Category Tree Name",
-        name: "categoryTreeName",
-        type: "string",
-        default: "",
-        description: "Name of the category tree",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: ["updateCategoryTree", "getCategoryTree", "deleteCategoryTree"],
-          },
-        },
-      },
-      {
-        displayName: "Category Tree Version",
-        name: "categoryTreeVersion",
-        type: "string",
-        default: "",
-        description: "Version of the category tree (required for get and delete operations)",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: ["getCategoryTree", "deleteCategoryTree"],
-          },
-        },
-      },
-      {
-        displayName: "Category Tree Data",
-        name: "categoryTreeData",
-        type: "string",
-        required: true,
-        default: "",
-        description: "The category tree definition (JSON format).",
-        displayOptions: {
-          show: {
-            operation: ["createCategoryTree", "updateCategoryTree"],
-          },
-        },
+        default: "getDefaultLocale",
       },
       {
         displayName: "Tenant",
@@ -274,7 +295,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["upsertItems", "patchItems", "deleteItems"],
+            resource: ["items"],
           },
         },
       },
@@ -287,7 +308,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["upsertItems", "patchItems", "deleteItems"],
+            resource: ["items"],
           },
         },
       },
@@ -300,7 +321,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["upsertItems", "patchItems", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
+            resource: ["items"],
           },
         },
       },
@@ -313,7 +334,7 @@ export class CrownpeakPD implements INodeType {
         description: "The data for the product item (JSON format). For CREATE: full item data, for UPDATE: only attributes to update, for DELETE: item identification (id, catalogVersion, type)",
         displayOptions: {
           show: {
-            operation: ["upsertItems", "patchItems", "deleteItems"],
+            resource: ["items"],
           },
         },
       },
@@ -326,7 +347,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
+            resource: ["itemSchema"],
           },
         },
       },
@@ -339,7 +360,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createItemSchema", "updateItemSchema", "deleteItemSchema", "getItemSchema", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
+            resource: ["itemSchema"],
           },
         },
       },
@@ -352,6 +373,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
+            resource: ["itemSchema"],
             operation: ["updateItemSchema", "deleteItemSchema", "getItemSchema"],
           },
         },
@@ -365,6 +387,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
+            resource: ["itemSchema"],
             operation: ["deleteItemSchema", "getItemSchema"],
           },
         },
@@ -378,20 +401,8 @@ export class CrownpeakPD implements INodeType {
         description: "The schema definition (JSON format). Example: {\"name\": \"product\", \"attributes\": [{\"name\": \"title\", \"type\": \"TEXT\"}]}",
         displayOptions: {
           show: {
+            resource: ["itemSchema"],
             operation: ["createItemSchema", "updateItemSchema"],
-          },
-        },
-      },
-      {
-        displayName: "Default Locale",
-        name: "defaultLocale",
-        type: "string",
-        default: "en",
-        description: "The locale code to set as default (e.g., 'en', 'fr', 'es', 'en_US', 'fr_FR'). Format: language_code or language_code_country_code",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: ["setDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -404,7 +415,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createCatalog", "deleteCatalog", "activateCatalog", "getActiveCatalog", "listCatalogs"],
+            resource: ["catalog"],
           },
         },
       },
@@ -417,7 +428,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createCatalog", "deleteCatalog", "activateCatalog", "getActiveCatalog", "listCatalogs"],
+            resource: ["catalog"],
           },
         },
       },
@@ -430,6 +441,7 @@ export class CrownpeakPD implements INodeType {
         description: "The catalog definition (JSON format). Example: {\"catalogItemSchemas\": [{\"name\": \"product\", \"version\": 1}], \"catalogCategoryTrees\": [{\"name\": \"root_name\", \"version\": 2}]}",
         displayOptions: {
           show: {
+            resource: ["catalog"],
             operation: ["createCatalog"],
           },
         },
@@ -443,7 +455,143 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
+            resource: ["catalog"],
             operation: ["deleteCatalog", "activateCatalog"],
+          },
+        },
+      },
+      {
+        displayName: "Tenant",
+        name: "categoryTreeTenant",
+        type: "string",
+        default: "solutions",
+        description: "Tenant identifier for category tree operations",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "categoryTreeEnvironment",
+        type: "string",
+        default: "cidp-test",
+        description: "Environment name for category tree operations",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "FHR Validation",
+        name: "categoryTreeFhrValidation",
+        type: "boolean",
+        default: false,
+        description: "Enable FHR (Fredhopper) validation for category names (alphanumerical characters only [A-Za-z0-9])",
+        required: false,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["createCategoryTree", "updateCategoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Category Tree Name",
+        name: "categoryTreeName",
+        type: "string",
+        default: "",
+        description: "Name of the category tree",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["updateCategoryTree", "getCategoryTree", "deleteCategoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Category Tree Version",
+        name: "categoryTreeVersion",
+        type: "string",
+        default: "",
+        description: "Version of the category tree (required for get and delete operations)",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["getCategoryTree", "deleteCategoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Category Tree Data",
+        name: "categoryTreeData",
+        type: "string",
+        required: true,
+        default: "",
+        description: "The category tree definition (JSON format).",
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["createCategoryTree", "updateCategoryTree"],
+          },
+        },
+      },
+      {
+        displayName: "Tenant",
+        name: "localeTenant",
+        type: "string",
+        default: "solutions",
+        description: "Tenant identifier for locale operations",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["locale"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "localeEnvironment",
+        type: "string",
+        default: "cidp-test",
+        description: "Environment name for locale operations",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["locale"],
+          },
+        },
+      },
+      {
+        displayName: "FHR Validation",
+        name: "localeFhrValidation",
+        type: "boolean",
+        default: false,
+        description: "Enable FHR validation?",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["locale"],
+          },
+        },
+      },
+      {
+        displayName: "Default Locale",
+        name: "defaultLocale",
+        type: "string",
+        default: "en",
+        description: "The locale code to set as default (e.g., 'en', 'fr', 'es', 'en_US', 'fr_FR'). Format: language_code or language_code_country_code",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["locale"],
+            operation: ["setDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -496,6 +644,7 @@ export class CrownpeakPD implements INodeType {
 
     for (let i = 0; i < items.length; i++) {
       try {
+        const resource = this.getNodeParameter("resource", i) as string;
         const operation = this.getNodeParameter("operation", i) as string;
         let responseData: IDataObject = {};
 
@@ -657,9 +806,9 @@ export class CrownpeakPD implements INodeType {
           }
           case "setDefaultLocale": {
             const defaultLocale = this.getNodeParameter("defaultLocale", i) as string;
-            const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const tenant = this.getNodeParameter("localeTenant", i) as string;
+            const environment = this.getNodeParameter("localeEnvironment", i) as string;
+            const fhrValidation = this.getNodeParameter("localeFhrValidation", i) as boolean;
             const url = `https://items.attraqt.io/locale/${encodeURIComponent(defaultLocale)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
@@ -675,9 +824,9 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "getDefaultLocale": {
-            const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const tenant = this.getNodeParameter("localeTenant", i) as string;
+            const environment = this.getNodeParameter("localeEnvironment", i) as string;
+            const fhrValidation = this.getNodeParameter("localeFhrValidation", i) as boolean;
             const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
@@ -693,9 +842,9 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "deleteDefaultLocale": {
-            const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
+            const tenant = this.getNodeParameter("localeTenant", i) as string;
+            const environment = this.getNodeParameter("localeEnvironment", i) as string;
+            const fhrValidation = this.getNodeParameter("localeFhrValidation", i) as boolean;
             const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
