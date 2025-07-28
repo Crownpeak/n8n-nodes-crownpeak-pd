@@ -44,22 +44,22 @@ export class CrownpeakPD implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: "Create Product",
-            value: "createProduct",
+            name: "Upsert Items",
+            value: "upsertItems",
             description: "Create a new product item",
-            action: "Create product",
+            action: "Upsert items",
           },
           {
-            name: "Update Product",
-            value: "updateProduct",
+            name: "Patch Items",
+            value: "patchItems",
             description: "Update existing product item attributes",
-            action: "Update product",
+            action: "Patch items",
           },
           {
-            name: "Delete Product",
-            value: "deleteProduct",
+            name: "Delete Items",
+            value: "deleteItems",
             description: "Delete product item",
-            action: "Delete product",
+            action: "Delete items",
           },
           {
             name: "Get Token",
@@ -170,7 +170,7 @@ export class CrownpeakPD implements INodeType {
             action: "Delete default locale",
           },
         ],
-        default: "createProduct",
+        default: "upsertItems",
       },
       {
         displayName: "Tenant",
@@ -274,7 +274,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct", "updateProduct", "deleteProduct"],
+            operation: ["upsertItems", "patchItems", "deleteItems"],
           },
         },
       },
@@ -287,7 +287,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct", "updateProduct", "deleteProduct"],
+            operation: ["upsertItems", "patchItems", "deleteItems"],
           },
         },
       },
@@ -300,7 +300,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["createProduct", "updateProduct", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
+            operation: ["upsertItems", "patchItems", "setDefaultLocale", "getDefaultLocale", "deleteDefaultLocale"],
           },
         },
       },
@@ -313,7 +313,7 @@ export class CrownpeakPD implements INodeType {
         description: "The data for the product item (JSON format). For CREATE: full item data, for UPDATE: only attributes to update, for DELETE: item identification (id, catalogVersion, type)",
         displayOptions: {
           show: {
-            operation: ["createProduct", "updateProduct", "deleteProduct"],
+            operation: ["upsertItems", "patchItems", "deleteItems"],
           },
         },
       },
@@ -500,7 +500,7 @@ export class CrownpeakPD implements INodeType {
         let responseData: IDataObject = {};
 
         switch (operation) {
-          case "createProduct": {
+          case "upsertItems": {
             const productData = this.getNodeParameter("contentData", i) as string;
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
@@ -520,7 +520,7 @@ export class CrownpeakPD implements INodeType {
             responseData = await this.helpers.request(options);
             break;
           }
-          case "updateProduct": {
+          case "patchItems": {
             const productData = this.getNodeParameter("contentData", i) as string;
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
@@ -540,7 +540,7 @@ export class CrownpeakPD implements INodeType {
             responseData = await this.helpers.request(options);
             break;
           }
-          case "deleteProduct": {
+          case "deleteItems": {
             const productData = this.getNodeParameter("contentData", i) as string;
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;

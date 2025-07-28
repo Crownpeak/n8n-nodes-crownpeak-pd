@@ -8,22 +8,22 @@ export const crownpeakPDOperations: INodeProperties[] = [
     noDataExpression: true,
     options: [
       {
-        name: "Create Product",
-        value: "createProduct",
+        name: "Upsert Items",
+        value: "upsertItems",
         description: "Create a new product item",
-        action: "Create product",
+        action: "Upsert items",
       },
       {
-        name: "Update Product",
-        value: "updateProduct",
+        name: "Patch Items",
+        value: "patchItems",
         description: "Update existing product item attributes",
-        action: "Update product",
+        action: "Patch items",
       },
       {
-        name: "Delete Product",
-        value: "deleteProduct",
+        name: "Delete Items",
+        value: "deleteItems",
         description: "Delete product item",
-        action: "Delete product",
+        action: "Delete items",
       },
       {
         name: "Get Token",
