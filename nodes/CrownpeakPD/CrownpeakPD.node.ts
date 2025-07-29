@@ -56,7 +56,7 @@ export class CrownpeakPD implements INodeType {
             value: "categoryTree",
           },
           {
-            name: "Items",
+            name: "Item",
             value: "items",
           },
           {
@@ -448,7 +448,6 @@ export class CrownpeakPD implements INodeType {
         name: "categoryTreeFhrValidation",
         type: "boolean",
         default: false,
-        required: false,
         displayOptions: {
           show: {
             resource: ["categoryTree"],
