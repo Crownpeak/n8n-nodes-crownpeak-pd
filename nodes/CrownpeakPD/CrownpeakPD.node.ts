@@ -13,7 +13,7 @@ import {
 export class CrownpeakPD implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Fredhopper Product Discovery",
-    name: "crownpeakPD",
+    name: "crownpeakPd",
     icon: "file:crownpeak.svg",
     group: ["input"],
     version: 1,
@@ -46,27 +46,22 @@ export class CrownpeakPD implements INodeType {
           {
             name: "Authentication",
             value: "authentication",
-            description: "Authentication operations",
-          },
-          {
-            name: "Items",
-            value: "items",
-            description: "Item and item schema operations",
           },
           {
             name: "Catalog",
             value: "catalog",
-            description: "Catalog operations",
           },
           {
             name: "Category Tree",
             value: "categoryTree",
-            description: "Category tree operations",
+          },
+          {
+            name: "Items",
+            value: "items",
           },
           {
             name: "Locale",
             value: "locale",
-            description: "Locale configuration operations",
           },
         ],
         default: "items",
@@ -85,7 +80,6 @@ export class CrownpeakPD implements INodeType {
           {
             name: "Get Token",
             value: "getToken",
-            description: "Get authentication token response",
             action: "Get authentication token",
           },
         ],
@@ -103,47 +97,39 @@ export class CrownpeakPD implements INodeType {
         },
         options: [
           {
-            name: "Upsert Items",
-            value: "upsertItems",
-            description: "Create a new item",
-            action: "Upsert items",
-          },
-          {
-            name: "Patch Items",
-            value: "patchItems",
-            description: "Update existing item attributes",
-            action: "Patch items",
-          },
-          {
-            name: "Delete Items",
-            value: "deleteItems",
-            description: "Delete an item",
-            action: "Delete items",
-          },
-
-          {
             name: "Create an Item Schema",
             value: "createItemSchema",
-            description: "Create a new item schema",
             action: "Create an item schema",
-          },
-          {
-            name: "Update an Item Schema",
-            value: "updateItemSchema",
-            description: "Update an existing item schema",
-            action: "Update an item schema",
-          },
-          {
-            name: "Get an Item Schema",
-            value: "getItemSchema",
-            description: "Get an item schema by name and version",
-            action: "Get an item schema",
           },
           {
             name: "Delete an Item Schema",
             value: "deleteItemSchema",
-            description: "Delete an item schema",
             action: "Delete an item schema",
+          },
+          {
+            name: "Delete Items",
+            value: "deleteItems",
+            action: "Delete items",
+          },
+          {
+            name: "Get an Item Schema",
+            value: "getItemSchema",
+            action: "Get an item schema",
+          },
+          {
+            name: "Patch Items",
+            value: "patchItems",
+            action: "Patch items",
+          },
+          {
+            name: "Update an Item Schema",
+            value: "updateItemSchema",
+            action: "Update an item schema",
+          },
+          {
+            name: "Upsert Items",
+            value: "upsertItems",
+            action: "Upsert items",
           },
         ],
         default: "upsertItems",
@@ -160,34 +146,29 @@ export class CrownpeakPD implements INodeType {
         },
         options: [
           {
-            name: "Create a Catalog",
-            value: "createCatalog",
-            description: "Create a new catalog",
-            action: "Create a Catalog",
-          },
-          {
-            name: "List Catalogs",
-            value: "listCatalogs",
-            description: "List all catalogs",
-            action: "List Catalogs",
-          },
-          {
-            name: "Get Active Catalog Version",
-            value: "getActiveCatalog",
-            description: "Get the currently active catalog version",
-            action: "Get Active Catalog Version",
-          },
-          {
             name: "Activate a Catalog Version",
             value: "activateCatalog",
-            description: "Activate a catalog version",
-            action: "Activate a Catalog Version",
+            action: "Activate a catalog version",
+          },
+          {
+            name: "Create a Catalog",
+            value: "createCatalog",
+            action: "Create a catalog",
           },
           {
             name: "Delete Catalog",
             value: "deleteCatalog",
-            description: "Delete an inactive catalog",
-            action: "Delete a Catalog",
+            action: "Delete a catalog",
+          },
+          {
+            name: "Get Active Catalog Version",
+            value: "getActiveCatalog",
+            action: "Get active catalog version",
+          },
+          {
+            name: "List Catalogs",
+            value: "listCatalogs",
+            action: "List catalogs",
           },
         ],
         default: "listCatalogs",
@@ -206,32 +187,27 @@ export class CrownpeakPD implements INodeType {
           {
             name: "Create a Category Tree",
             value: "createCategoryTree",
-            description: "Create a new category tree",
-            action: "Create a Category Tree",
-          },
-          {
-            name: "Update a Category Tree",
-            value: "updateCategoryTree",
-            description: "Update an existing category tree",
-            action: "Update a Category Tree",
-          },
-          {
-            name: "List Category Trees",
-            value: "listCategoryTrees",
-            description: "List all category trees",
-            action: "List category trees",
-          },
-          {
-            name: "Get a Category Tree",
-            value: "getCategoryTree",
-            description: "Get a category tree by name and version",
-            action: "Get a Category Tree",
+            action: "Create a category tree",
           },
           {
             name: "Delete a Category Tree",
             value: "deleteCategoryTree",
-            description: "Delete a category tree",
-            action: "Delete a Category Tree",
+            action: "Delete a category tree",
+          },
+          {
+            name: "Get a Category Tree",
+            value: "getCategoryTree",
+            action: "Get a category tree",
+          },
+          {
+            name: "List Category Trees",
+            value: "listCategoryTrees",
+            action: "List category trees",
+          },
+          {
+            name: "Update a Category Tree",
+            value: "updateCategoryTree",
+            action: "Update a category tree",
           },
         ],
         default: "listCategoryTrees",
@@ -250,19 +226,16 @@ export class CrownpeakPD implements INodeType {
           {
             name: "Set Default Locale",
             value: "setDefaultLocale",
-            description: "Set the default locale for an item schema",
             action: "Set default locale",
           },
           {
             name: "Get Default Locale",
             value: "getDefaultLocale",
-            description: "Get the default locale for an item schema",
             action: "Get default locale",
           },
           {
             name: "Delete Default Locale",
             value: "deleteDefaultLocale",
-            description: "Delete the default locale for an item schema",
             action: "Delete default locale",
           },
         ],
@@ -273,7 +246,6 @@ export class CrownpeakPD implements INodeType {
         name: "tenant",
         type: "string",
         default: "solutions",
-        description: "Tenant identifier (e.g., solutions)",
         required: true,
         displayOptions: {
           show: {
@@ -286,7 +258,6 @@ export class CrownpeakPD implements INodeType {
         name: "environment",
         type: "string",
         default: "cidp-test",
-        description: "Environment name (e.g., cidp-test, production)",
         required: true,
         displayOptions: {
           show: {
@@ -299,7 +270,6 @@ export class CrownpeakPD implements INodeType {
         name: "fhrValidation",
         type: "boolean",
         default: false,
-        description: "Enable FHR validation?",
         required: true,
         displayOptions: {
           show: {
@@ -313,7 +283,6 @@ export class CrownpeakPD implements INodeType {
         type: "string",
         required: true,
         default: "",
-        description: "The data for the product item (JSON format). For CREATE: full item data, for UPDATE: only attributes to update, for DELETE: item identification (id, catalogVersion, type)",
         displayOptions: {
           show: {
             resource: ["items"],
@@ -326,12 +295,16 @@ export class CrownpeakPD implements INodeType {
         name: "schemaTenant",
         type: "string",
         default: "solutions",
-        description: "Tenant identifier for schema operations",
         required: true,
         displayOptions: {
           show: {
             resource: ["items"],
-            operation: ["createItemSchema", "updateItemSchema", "getItemSchema", "deleteItemSchema"],
+            operation: [
+              "createItemSchema",
+              "updateItemSchema",
+              "getItemSchema",
+              "deleteItemSchema",
+            ],
           },
         },
       },
@@ -340,12 +313,16 @@ export class CrownpeakPD implements INodeType {
         name: "schemaEnvironment",
         type: "string",
         default: "cidp-test",
-        description: "Environment name for schema operations",
         required: true,
         displayOptions: {
           show: {
             resource: ["items"],
-            operation: ["createItemSchema", "updateItemSchema", "getItemSchema", "deleteItemSchema"],
+            operation: [
+              "createItemSchema",
+              "updateItemSchema",
+              "getItemSchema",
+              "deleteItemSchema",
+            ],
           },
         },
       },
@@ -354,12 +331,15 @@ export class CrownpeakPD implements INodeType {
         name: "schemaName",
         type: "string",
         default: "",
-        description: "Name of the item schema",
         required: true,
         displayOptions: {
           show: {
             resource: ["items"],
-            operation: ["updateItemSchema", "deleteItemSchema", "getItemSchema"],
+            operation: [
+              "updateItemSchema",
+              "deleteItemSchema",
+              "getItemSchema",
+            ],
           },
         },
       },
@@ -368,7 +348,6 @@ export class CrownpeakPD implements INodeType {
         name: "schemaVersion",
         type: "string",
         default: "",
-        description: "Version of the item schema (required for delete and get operations)",
         required: true,
         displayOptions: {
           show: {
@@ -383,7 +362,6 @@ export class CrownpeakPD implements INodeType {
         type: "string",
         required: true,
         default: "",
-        description: "The schema definition (JSON format). Example: {\"name\": \"product\", \"attributes\": [{\"name\": \"title\", \"type\": \"TEXT\"}]}",
         displayOptions: {
           show: {
             resource: ["items"],
@@ -396,7 +374,6 @@ export class CrownpeakPD implements INodeType {
         name: "catalogTenant",
         type: "string",
         default: "solutions",
-        description: "Tenant identifier for catalog operations",
         required: true,
         displayOptions: {
           show: {
@@ -409,7 +386,6 @@ export class CrownpeakPD implements INodeType {
         name: "catalogEnvironment",
         type: "string",
         default: "cidp-test",
-        description: "Environment name for catalog operations",
         required: true,
         displayOptions: {
           show: {
@@ -423,7 +399,6 @@ export class CrownpeakPD implements INodeType {
         type: "string",
         required: true,
         default: "",
-        description: "The catalog definition (JSON format). Example: {\"catalogItemSchemas\": [{\"name\": \"product\", \"version\": 1}], \"catalogCategoryTrees\": [{\"name\": \"root_name\", \"version\": 2}]}",
         displayOptions: {
           show: {
             resource: ["catalog"],
@@ -436,7 +411,6 @@ export class CrownpeakPD implements INodeType {
         name: "catalogVersion",
         type: "string",
         default: "",
-        description: "Version of the catalog (required for delete and activate operations)",
         required: true,
         displayOptions: {
           show: {
@@ -450,7 +424,6 @@ export class CrownpeakPD implements INodeType {
         name: "categoryTreeTenant",
         type: "string",
         default: "solutions",
-        description: "Tenant identifier for category tree operations",
         required: true,
         displayOptions: {
           show: {
@@ -463,7 +436,6 @@ export class CrownpeakPD implements INodeType {
         name: "categoryTreeEnvironment",
         type: "string",
         default: "cidp-test",
-        description: "Environment name for category tree operations",
         required: true,
         displayOptions: {
           show: {
@@ -476,7 +448,6 @@ export class CrownpeakPD implements INodeType {
         name: "categoryTreeFhrValidation",
         type: "boolean",
         default: false,
-        description: "Enable FHR (Fredhopper) validation for category names (alphanumerical characters only [A-Za-z0-9])",
         required: false,
         displayOptions: {
           show: {
@@ -490,12 +461,15 @@ export class CrownpeakPD implements INodeType {
         name: "categoryTreeName",
         type: "string",
         default: "",
-        description: "Name of the category tree",
         required: true,
         displayOptions: {
           show: {
             resource: ["categoryTree"],
-            operation: ["updateCategoryTree", "getCategoryTree", "deleteCategoryTree"],
+            operation: [
+              "updateCategoryTree",
+              "getCategoryTree",
+              "deleteCategoryTree",
+            ],
           },
         },
       },
@@ -504,7 +478,6 @@ export class CrownpeakPD implements INodeType {
         name: "categoryTreeVersion",
         type: "string",
         default: "",
-        description: "Version of the category tree (required for get and delete operations)",
         required: true,
         displayOptions: {
           show: {
@@ -519,7 +492,6 @@ export class CrownpeakPD implements INodeType {
         type: "string",
         required: true,
         default: "",
-        description: "The category tree definition (JSON format).",
         displayOptions: {
           show: {
             resource: ["categoryTree"],
@@ -532,7 +504,6 @@ export class CrownpeakPD implements INodeType {
         name: "localeTenant",
         type: "string",
         default: "solutions",
-        description: "Tenant identifier for locale operations",
         required: true,
         displayOptions: {
           show: {
@@ -545,7 +516,6 @@ export class CrownpeakPD implements INodeType {
         name: "localeEnvironment",
         type: "string",
         default: "cidp-test",
-        description: "Environment name for locale operations",
         required: true,
         displayOptions: {
           show: {
@@ -558,7 +528,6 @@ export class CrownpeakPD implements INodeType {
         name: "localeFhrValidation",
         type: "boolean",
         default: false,
-        description: "Enable FHR validation?",
         required: true,
         displayOptions: {
           show: {
@@ -571,7 +540,6 @@ export class CrownpeakPD implements INodeType {
         name: "defaultLocale",
         type: "string",
         default: "en",
-        description: "The locale code to set as default (e.g., 'en', 'fr', 'es', 'en_US', 'fr_FR'). Format: language_code or language_code_country_code",
         required: true,
         displayOptions: {
           show: {
@@ -635,11 +603,24 @@ export class CrownpeakPD implements INodeType {
 
         switch (operation) {
           case "upsertItems": {
-            const productData = this.getNodeParameter("contentData", i) as string;
+            const productData = this.getNodeParameter(
+              "contentData",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("tenant", i) as string;
-            const environment = this.getNodeParameter("environment", i) as string;
-            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
-            const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const environment = this.getNodeParameter(
+              "environment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "fhrValidation",
+              i
+            ) as boolean;
+            const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(
+              environment
+            )}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -655,11 +636,24 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "patchItems": {
-            const productData = this.getNodeParameter("contentData", i) as string;
+            const productData = this.getNodeParameter(
+              "contentData",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("tenant", i) as string;
-            const environment = this.getNodeParameter("environment", i) as string;
-            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
-            const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const environment = this.getNodeParameter(
+              "environment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "fhrValidation",
+              i
+            ) as boolean;
+            const url = `https://items.attraqt.io/items?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(
+              environment
+            )}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "PATCH",
@@ -675,10 +669,18 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "deleteItems": {
-            const productData = this.getNodeParameter("contentData", i) as string;
+            const productData = this.getNodeParameter(
+              "contentData",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("tenant", i) as string;
-            const environment = this.getNodeParameter("environment", i) as string;
-            const url = `https://items.attraqt.io/items/delete?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "environment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/items/delete?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -698,7 +700,9 @@ export class CrownpeakPD implements INodeType {
             const username = credentials.username as string;
             const password = credentials.password as string;
             const authUrl = credentials.authUrl as string;
-            const basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
+            const basicAuth = Buffer.from(`${username}:${password}`).toString(
+              "base64"
+            );
             const options: IHttpRequestOptions = {
               method: "POST",
               url: authUrl,
@@ -709,14 +713,20 @@ export class CrownpeakPD implements INodeType {
               body: "grant_type=client_credentials",
             };
             const response = await this.helpers.request(options);
-            responseData = typeof response === "string" ? JSON.parse(response) : response;
+            responseData =
+              typeof response === "string" ? JSON.parse(response) : response;
             break;
           }
           case "createItemSchema": {
             const schemaData = this.getNodeParameter("schemaData", i) as string;
             const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const url = `https://items.attraqt.io/item-schemas?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "schemaEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/item-schemas?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -735,8 +745,15 @@ export class CrownpeakPD implements INodeType {
             const schemaData = this.getNodeParameter("schemaData", i) as string;
             const schemaName = this.getNodeParameter("schemaName", i) as string;
             const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "schemaEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(
+              schemaName
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "PUT",
@@ -753,10 +770,20 @@ export class CrownpeakPD implements INodeType {
           }
           case "deleteItemSchema": {
             const schemaName = this.getNodeParameter("schemaName", i) as string;
-            const schemaVersion = this.getNodeParameter("schemaVersion", i) as string;
+            const schemaVersion = this.getNodeParameter(
+              "schemaVersion",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "schemaEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(
+              schemaName
+            )}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "DELETE",
@@ -772,10 +799,20 @@ export class CrownpeakPD implements INodeType {
           }
           case "getItemSchema": {
             const schemaName = this.getNodeParameter("schemaName", i) as string;
-            const schemaVersion = this.getNodeParameter("schemaVersion", i) as string;
+            const schemaVersion = this.getNodeParameter(
+              "schemaVersion",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("schemaTenant", i) as string;
-            const environment = this.getNodeParameter("schemaEnvironment", i) as string;
-            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(schemaName)}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "schemaEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/item-schemas/${encodeURIComponent(
+              schemaName
+            )}/${encodeURIComponent(schemaVersion)}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -790,11 +827,26 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "setDefaultLocale": {
-            const defaultLocale = this.getNodeParameter("defaultLocale", i) as string;
+            const defaultLocale = this.getNodeParameter(
+              "defaultLocale",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("localeTenant", i) as string;
-            const environment = this.getNodeParameter("localeEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("localeFhrValidation", i) as boolean;
-            const url = `https://items.attraqt.io/locale/${encodeURIComponent(defaultLocale)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const environment = this.getNodeParameter(
+              "localeEnvironment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "localeFhrValidation",
+              i
+            ) as boolean;
+            const url = `https://items.attraqt.io/locale/${encodeURIComponent(
+              defaultLocale
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(
+              environment
+            )}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -810,9 +862,19 @@ export class CrownpeakPD implements INodeType {
           }
           case "getDefaultLocale": {
             const tenant = this.getNodeParameter("localeTenant", i) as string;
-            const environment = this.getNodeParameter("localeEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("localeFhrValidation", i) as boolean;
-            const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const environment = this.getNodeParameter(
+              "localeEnvironment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "localeFhrValidation",
+              i
+            ) as boolean;
+            const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(
+              environment
+            )}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -828,9 +890,19 @@ export class CrownpeakPD implements INodeType {
           }
           case "deleteDefaultLocale": {
             const tenant = this.getNodeParameter("localeTenant", i) as string;
-            const environment = this.getNodeParameter("localeEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("localeFhrValidation", i) as boolean;
-            const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}`;
+            const environment = this.getNodeParameter(
+              "localeEnvironment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "localeFhrValidation",
+              i
+            ) as boolean;
+            const url = `https://items.attraqt.io/locale?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(
+              environment
+            )}&fhrValidation=${fhrValidation}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "DELETE",
@@ -845,10 +917,18 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "createCatalog": {
-            const catalogData = this.getNodeParameter("catalogData", i) as string;
+            const catalogData = this.getNodeParameter(
+              "catalogData",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("catalogTenant", i) as string;
-            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
-            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "catalogEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -860,9 +940,10 @@ export class CrownpeakPD implements INodeType {
               body: catalogData,
               json: true,
             };
-            
+
             const response = await this.helpers.request(options);
-            const catalogVersion = response?.version || response?.catalogVersion || 'unknown';
+            const catalogVersion =
+              response?.version || response?.catalogVersion || "unknown";
             responseData = {
               success: true,
               message: `Catalog created successfully with version ${catalogVersion}`,
@@ -870,16 +951,27 @@ export class CrownpeakPD implements INodeType {
               tenant: tenant,
               environment: environment,
               status: "inactive",
-              note: "New catalogs are created as inactive. Use 'Activate Catalog' to activate it.",
-              response: response
+              note:
+                "New catalogs are created as inactive. Use 'Activate Catalog' to activate it.",
+              response: response,
             };
             break;
           }
           case "deleteCatalog": {
-            const catalogVersion = this.getNodeParameter("catalogVersion", i) as string;
+            const catalogVersion = this.getNodeParameter(
+              "catalogVersion",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("catalogTenant", i) as string;
-            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
-            const url = `https://items.attraqt.io/catalogs/${encodeURIComponent(catalogVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "catalogEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/catalogs/${encodeURIComponent(
+              catalogVersion
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "DELETE",
@@ -890,7 +982,7 @@ export class CrownpeakPD implements INodeType {
               },
               json: false,
             };
-            
+
             const response = await this.helpers.request(options);
             responseData = {
               success: true,
@@ -898,15 +990,25 @@ export class CrownpeakPD implements INodeType {
               catalogVersion: catalogVersion,
               tenant: tenant,
               environment: environment,
-              response: response || "Catalog deleted successfully"
+              response: response || "Catalog deleted successfully",
             };
             break;
           }
           case "activateCatalog": {
-            const catalogVersion = this.getNodeParameter("catalogVersion", i) as string;
+            const catalogVersion = this.getNodeParameter(
+              "catalogVersion",
+              i
+            ) as string;
             const tenant = this.getNodeParameter("catalogTenant", i) as string;
-            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
-            const url = `https://items.attraqt.io/catalogs/activate/${encodeURIComponent(catalogVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "catalogEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/catalogs/activate/${encodeURIComponent(
+              catalogVersion
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -917,7 +1019,7 @@ export class CrownpeakPD implements INodeType {
               },
               json: false,
             };
-            
+
             const response = await this.helpers.request(options);
             responseData = {
               success: true,
@@ -926,14 +1028,19 @@ export class CrownpeakPD implements INodeType {
               tenant: tenant,
               environment: environment,
               status: "active",
-              response: response || "Catalog activated successfully"
+              response: response || "Catalog activated successfully",
             };
             break;
           }
           case "getActiveCatalog": {
             const tenant = this.getNodeParameter("catalogTenant", i) as string;
-            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
-            const url = `https://items.attraqt.io/catalogs/active?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "catalogEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/catalogs/active?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -949,8 +1056,13 @@ export class CrownpeakPD implements INodeType {
           }
           case "listCatalogs": {
             const tenant = this.getNodeParameter("catalogTenant", i) as string;
-            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
-            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter(
+              "catalogEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -965,16 +1077,30 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "createCategoryTree": {
-            const categoryTreeData = this.getNodeParameter("categoryTreeData", i) as string;
-            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
-            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("categoryTreeFhrValidation", i) as boolean;
-            
-            let url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const categoryTreeData = this.getNodeParameter(
+              "categoryTreeData",
+              i
+            ) as string;
+            const tenant = this.getNodeParameter(
+              "categoryTreeTenant",
+              i
+            ) as string;
+            const environment = this.getNodeParameter(
+              "categoryTreeEnvironment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "categoryTreeFhrValidation",
+              i
+            ) as boolean;
+
+            let url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             if (fhrValidation) {
               url += "&fhrValidation=true";
             }
-            
+
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -990,17 +1116,36 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "updateCategoryTree": {
-            const categoryTreeData = this.getNodeParameter("categoryTreeData", i) as string;
-            const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
-            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
-            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const fhrValidation = this.getNodeParameter("categoryTreeFhrValidation", i) as boolean;
-            
-            let url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const categoryTreeData = this.getNodeParameter(
+              "categoryTreeData",
+              i
+            ) as string;
+            const categoryTreeName = this.getNodeParameter(
+              "categoryTreeName",
+              i
+            ) as string;
+            const tenant = this.getNodeParameter(
+              "categoryTreeTenant",
+              i
+            ) as string;
+            const environment = this.getNodeParameter(
+              "categoryTreeEnvironment",
+              i
+            ) as string;
+            const fhrValidation = this.getNodeParameter(
+              "categoryTreeFhrValidation",
+              i
+            ) as boolean;
+
+            let url = `https://items.attraqt.io/category-trees/${encodeURIComponent(
+              categoryTreeName
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             if (fhrValidation) {
               url += "&fhrValidation=true";
             }
-            
+
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "PUT",
@@ -1016,9 +1161,17 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "listCategoryTrees": {
-            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
-            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const tenant = this.getNodeParameter(
+              "categoryTreeTenant",
+              i
+            ) as string;
+            const environment = this.getNodeParameter(
+              "categoryTreeEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -1033,11 +1186,29 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "getCategoryTree": {
-            const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
-            const categoryTreeVersion = this.getNodeParameter("categoryTreeVersion", i) as string;
-            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
-            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}/${encodeURIComponent(categoryTreeVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const categoryTreeName = this.getNodeParameter(
+              "categoryTreeName",
+              i
+            ) as string;
+            const categoryTreeVersion = this.getNodeParameter(
+              "categoryTreeVersion",
+              i
+            ) as string;
+            const tenant = this.getNodeParameter(
+              "categoryTreeTenant",
+              i
+            ) as string;
+            const environment = this.getNodeParameter(
+              "categoryTreeEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(
+              categoryTreeName
+            )}/${encodeURIComponent(
+              categoryTreeVersion
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -1052,11 +1223,29 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "deleteCategoryTree": {
-            const categoryTreeName = this.getNodeParameter("categoryTreeName", i) as string;
-            const categoryTreeVersion = this.getNodeParameter("categoryTreeVersion", i) as string;
-            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
-            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
-            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(categoryTreeName)}/${encodeURIComponent(categoryTreeVersion)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const categoryTreeName = this.getNodeParameter(
+              "categoryTreeName",
+              i
+            ) as string;
+            const categoryTreeVersion = this.getNodeParameter(
+              "categoryTreeVersion",
+              i
+            ) as string;
+            const tenant = this.getNodeParameter(
+              "categoryTreeTenant",
+              i
+            ) as string;
+            const environment = this.getNodeParameter(
+              "categoryTreeEnvironment",
+              i
+            ) as string;
+            const url = `https://items.attraqt.io/category-trees/${encodeURIComponent(
+              categoryTreeName
+            )}/${encodeURIComponent(
+              categoryTreeVersion
+            )}?tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "DELETE",
