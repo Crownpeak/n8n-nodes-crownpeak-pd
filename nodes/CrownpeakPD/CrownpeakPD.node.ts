@@ -51,12 +51,7 @@ export class CrownpeakPD implements INodeType {
           {
             name: "Items",
             value: "items",
-            description: "Product item operations",
-          },
-          {
-            name: "Item Schema",
-            value: "itemSchema",
-            description: "Item schema operations",
+            description: "Item and item schema operations",
           },
           {
             name: "Catalog",
@@ -125,20 +120,7 @@ export class CrownpeakPD implements INodeType {
             description: "Delete an item",
             action: "Delete items",
           },
-        ],
-        default: "upsertItems",
-      },
-      {
-        displayName: "Operation",
-        name: "operation",
-        type: "options",
-        noDataExpression: true,
-        displayOptions: {
-          show: {
-            resource: ["itemSchema"],
-          },
-        },
-        options: [
+
           {
             name: "Create an Item Schema",
             value: "createItemSchema",
@@ -164,7 +146,7 @@ export class CrownpeakPD implements INodeType {
             action: "Delete an item schema",
           },
         ],
-        default: "createItemSchema",
+        default: "upsertItems",
       },
       {
         displayName: "Operation",
@@ -335,6 +317,7 @@ export class CrownpeakPD implements INodeType {
         displayOptions: {
           show: {
             resource: ["items"],
+            operation: ["upsertItems", "patchItems", "deleteItems"],
           },
         },
       },
@@ -347,7 +330,8 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            resource: ["itemSchema"],
+            resource: ["items"],
+            operation: ["createItemSchema", "updateItemSchema", "getItemSchema", "deleteItemSchema"],
           },
         },
       },
@@ -360,7 +344,8 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            resource: ["itemSchema"],
+            resource: ["items"],
+            operation: ["createItemSchema", "updateItemSchema", "getItemSchema", "deleteItemSchema"],
           },
         },
       },
@@ -373,7 +358,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            resource: ["itemSchema"],
+            resource: ["items"],
             operation: ["updateItemSchema", "deleteItemSchema", "getItemSchema"],
           },
         },
@@ -387,7 +372,7 @@ export class CrownpeakPD implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            resource: ["itemSchema"],
+            resource: ["items"],
             operation: ["deleteItemSchema", "getItemSchema"],
           },
         },
@@ -401,7 +386,7 @@ export class CrownpeakPD implements INodeType {
         description: "The schema definition (JSON format). Example: {\"name\": \"product\", \"attributes\": [{\"name\": \"title\", \"type\": \"TEXT\"}]}",
         displayOptions: {
           show: {
-            resource: ["itemSchema"],
+            resource: ["items"],
             operation: ["createItemSchema", "updateItemSchema"],
           },
         },
