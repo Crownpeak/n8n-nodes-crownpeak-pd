@@ -10,7 +10,7 @@ describe('CrownpeakPD Node', () => {
   });
 
   it('should contain correct node metadata', () => {
-    expect(node.description.name).toBe('crownpeakPD');
+    expect(node.description.name).toBe('crownpeakPd');
     expect(node.description.displayName).toBe('Fredhopper Product Discovery');
     expect(Array.isArray(node.description.properties)).toBe(true);
     expect(node.description.credentials?.[0].name).toBe('crownpeakPDApi');
