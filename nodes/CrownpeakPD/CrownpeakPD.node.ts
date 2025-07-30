@@ -174,6 +174,50 @@ export class CrownpeakPD implements INodeType {
         default: "listCatalogs",
       },
       {
+        displayName: "Return All",
+        name: "returnAll",
+        type: "boolean",
+        default: true,
+        displayOptions: {
+          show: {
+            resource: ["catalog"],
+            operation: ["listCatalogs"],
+          },
+        },
+        description: "If all results should be returned or only up to a limit.",
+      },
+      {
+        displayName: "Simplify Output",
+        name: "simplify",
+        type: "boolean",
+        default: false,
+        description: "If enabled, only a simplified summary of the response will be returned instead of the full/raw output.",
+        displayOptions: {
+          show: {
+            resource: ["catalog"],
+            operation: ["listCatalogs"],
+          },
+        },
+      },
+      {
+        displayName: "Limit",
+        name: "limit",
+        type: "number",
+        typeOptions: {
+          minValue: 1,
+          maxValue: 1000,
+        },
+        default: 100,
+        displayOptions: {
+          show: {
+            resource: ["catalog"],
+            operation: ["listCatalogs"],
+            returnAll: [false],
+          },
+        },
+        description: "Max number of results to return.",
+      },
+      {
         displayName: "Operation",
         name: "operation",
         type: "options",
@@ -211,6 +255,50 @@ export class CrownpeakPD implements INodeType {
           },
         ],
         default: "listCategoryTrees",
+      },
+      {
+        displayName: "Return All",
+        name: "returnAll",
+        type: "boolean",
+        default: true,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["listCategoryTrees"],
+          },
+        },
+        description: "If all results should be returned or only up to a limit.",
+      },
+      {
+        displayName: "Simplify Output",
+        name: "simplify",
+        type: "boolean",
+        default: false,
+        description: "If enabled, only a simplified summary of the response will be returned instead of the full/raw output.",
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["listCategoryTrees"],
+          },
+        },
+      },
+      {
+        displayName: "Limit",
+        name: "limit",
+        type: "number",
+        typeOptions: {
+          minValue: 1,
+          maxValue: 1000,
+        },
+        default: 100,
+        displayOptions: {
+          show: {
+            resource: ["categoryTree"],
+            operation: ["listCategoryTrees"],
+            returnAll: [false],
+          },
+        },
+        description: "Max number of results to return.",
       },
       {
         displayName: "Operation",
@@ -691,7 +779,8 @@ export class CrownpeakPD implements INodeType {
               body: productData,
               json: true,
             };
-            responseData = await this.helpers.request(options);
+            await this.helpers.request(options);
+            responseData = { deleted: true };
             break;
           }
           case "getToken": {
@@ -793,7 +882,8 @@ export class CrownpeakPD implements INodeType {
               },
               json: true,
             };
-            responseData = await this.helpers.request(options);
+            await this.helpers.request(options);
+            responseData = { deleted: true };
             break;
           }
           case "getItemSchema": {
@@ -982,15 +1072,8 @@ export class CrownpeakPD implements INodeType {
               json: false,
             };
 
-            const response = await this.helpers.request(options);
-            responseData = {
-              success: true,
-              message: `Catalog version ${catalogVersion} deleted successfully`,
-              catalogVersion: catalogVersion,
-              tenant: tenant,
-              environment: environment,
-              response: response || "Catalog deleted successfully",
-            };
+            await this.helpers.request(options);
+            responseData = { deleted: true };
             break;
           }
           case "activateCatalog": {
@@ -1050,18 +1133,17 @@ export class CrownpeakPD implements INodeType {
               },
               json: true,
             };
-            responseData = await this.helpers.request(options);
+            await this.helpers.request(options);
+            responseData = { deleted: true };
             break;
           }
           case "listCatalogs": {
             const tenant = this.getNodeParameter("catalogTenant", i) as string;
-            const environment = this.getNodeParameter(
-              "catalogEnvironment",
-              i
-            ) as string;
-            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(
-              tenant
-            )}&environment=${encodeURIComponent(environment)}`;
+            const environment = this.getNodeParameter("catalogEnvironment", i) as string;
+            const returnAll = this.getNodeParameter("returnAll", i, true) as boolean;
+            const limit = this.getNodeParameter("limit", i, true) as number;
+            const simplify = this.getNodeParameter("simplify", i, false) as boolean;
+            const url = `https://items.attraqt.io/catalogs?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -1072,7 +1154,25 @@ export class CrownpeakPD implements INodeType {
               },
               json: true,
             };
-            responseData = await this.helpers.request(options);
+            let catalogs = await this.helpers.request(options);
+            if (Array.isArray(catalogs)) {
+              if (!returnAll) {
+                catalogs = catalogs.slice(0, limit);
+              }
+              if (simplify) {
+                responseData = catalogs.map((c: any) => ({
+                  version: c.version || c.catalogVersion,
+                  status: c.status,
+                  created: c.created,
+                  updated: c.updated,
+                  description: c.description,
+                }));
+              } else {
+                responseData = catalogs;
+              }
+            } else {
+              responseData = catalogs;
+            }
             break;
           }
           case "createCategoryTree": {
@@ -1160,17 +1260,12 @@ export class CrownpeakPD implements INodeType {
             break;
           }
           case "listCategoryTrees": {
-            const tenant = this.getNodeParameter(
-              "categoryTreeTenant",
-              i
-            ) as string;
-            const environment = this.getNodeParameter(
-              "categoryTreeEnvironment",
-              i
-            ) as string;
-            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(
-              tenant
-            )}&environment=${encodeURIComponent(environment)}`;
+            const tenant = this.getNodeParameter("categoryTreeTenant", i) as string;
+            const environment = this.getNodeParameter("categoryTreeEnvironment", i) as string;
+            const returnAll = this.getNodeParameter("returnAll", i, true) as boolean;
+            const limit = this.getNodeParameter("limit", i, true) as number;
+            const simplify = this.getNodeParameter("simplify", i, false) as boolean;
+            const url = `https://items.attraqt.io/category-trees?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
             const options: IHttpRequestOptions = {
               method: "GET",
@@ -1181,7 +1276,25 @@ export class CrownpeakPD implements INodeType {
               },
               json: true,
             };
-            responseData = await this.helpers.request(options);
+            let trees = await this.helpers.request(options);
+            if (Array.isArray(trees)) {
+              if (!returnAll) {
+                trees = trees.slice(0, limit);
+              }
+              if (simplify) {
+                responseData = trees.map((t: any) => ({
+                  name: t.name,
+                  version: t.version,
+                  created: t.created,
+                  updated: t.updated,
+                  description: t.description,
+                }));
+              } else {
+                responseData = trees;
+              }
+            } else {
+              responseData = trees;
+            }
             break;
           }
           case "getCategoryTree": {
@@ -1255,7 +1368,8 @@ export class CrownpeakPD implements INodeType {
               },
               json: true,
             };
-            responseData = await this.helpers.request(options);
+            await this.helpers.request(options);
+            responseData = { deleted: true };
             break;
           }
           default:
