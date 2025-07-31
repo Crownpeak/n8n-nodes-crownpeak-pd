@@ -95,44 +95,89 @@ export class CrownpeakPD implements INodeType {
             resource: ["items"],
           },
         },
-        options: [
-          {
-            name: "Create an Item Schema",
-            value: "createItemSchema",
-            action: "Create an item schema",
-          },
-          {
-            name: "Delete an Item Schema",
-            value: "deleteItemSchema",
-            action: "Delete an item schema",
-          },
-          {
-            name: "Delete Items",
-            value: "deleteItems",
-            action: "Delete items",
-          },
-          {
-            name: "Get an Item Schema",
-            value: "getItemSchema",
-            action: "Get an item schema",
-          },
-          {
-            name: "Patch Items",
-            value: "patchItems",
-            action: "Patch items",
-          },
-          {
-            name: "Update an Item Schema",
-            value: "updateItemSchema",
-            action: "Update an item schema",
-          },
-          {
-            name: "Upsert Items",
-            value: "upsertItems",
-            action: "Upsert items",
-          },
-        ],
-        default: "upsertItems",
+      options: [
+        {
+          name: "Create an Item Schema",
+          value: "createItemSchema",
+          action: "Create an item schema",
+        },
+        {
+          name: "Delete an Item Schema",
+          value: "deleteItemSchema",
+          action: "Delete an item schema",
+        },
+        {
+          name: "Delete Items",
+          value: "deleteItems",
+          action: "Delete items",
+        },
+        {
+          name: "Get an Item Schema",
+          value: "getItemSchema",
+          action: "Get an item schema",
+        },
+        {
+          name: "Patch Items",
+          value: "patchItems",
+          action: "Patch items",
+        },
+        {
+          name: "Update an Item Schema",
+          value: "updateItemSchema",
+          action: "Update an item schema",
+        },
+        {
+          name: "Upsert Items",
+          value: "upsertItems",
+          action: "Upsert items",
+        },
+        {
+          name: "Create Batch",
+          value: "createBatch",
+          action: "Create a batch",
+        },
+        {
+          name: "List Batches",
+          value: "listBatches",
+          action: "List batches",
+        },
+        {
+          name: "Add Items to Batch",
+          value: "addItemsToBatch",
+          action: "Add items to batch",
+        },
+        {
+          name: "Modify Items in Batch",
+          value: "modifyItemsInBatch",
+          action: "Modify items in batch",
+        },
+        {
+          name: "Delete Items from Batch",
+          value: "deleteItemsFromBatch",
+          action: "Delete items from batch",
+        },
+        {
+          name: "Submit Batch Ingestion",
+          value: "submitBatchIngestion",
+          action: "Submit batch ingestion",
+        },
+        {
+          name: "Get Batch Ingestion Status",
+          value: "getBatchIngestionStatus",
+          action: "Get batch ingestion status",
+        },
+        {
+          name: "List Batch Ingestions",
+          value: "listBatchIngestions",
+          action: "List batch ingestions",
+        },
+        {
+          name: "Delete Batch",
+          value: "deleteBatch",
+          action: "Delete batch",
+        },
+      ],
+      default: "upsertItems",
       },
       {
         displayName: "Operation",
@@ -458,6 +503,54 @@ export class CrownpeakPD implements INodeType {
         },
       },
       {
+        displayName: "Batch ID",
+        name: "batchId",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: [
+              "addItemsToBatch",
+              "modifyItemsInBatch",
+              "deleteItemsFromBatch",
+              "submitBatchIngestion",
+              "getBatchIngestionStatus",
+              "listBatchIngestions",
+              "deleteBatch"
+            ],
+          },
+        },
+        default: "",
+      },
+      {
+        displayName: "Batch Items",
+        name: "batchItems",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["addItemsToBatch", "modifyItemsInBatch", "deleteItemsFromBatch"],
+          },
+        },
+        default: "",
+        description: "JSON array of items to add/modify/delete in the batch.",
+      },
+      {
+        displayName: "Ingestion ID",
+        name: "ingestionId",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["getBatchIngestionStatus"],
+          },
+        },
+        default: "",
+      },
+      {
         displayName: "Tenant",
         name: "catalogTenant",
         type: "string",
@@ -689,6 +782,171 @@ export class CrownpeakPD implements INodeType {
         let responseData: IDataObject = {};
 
         switch (operation) {
+          case "createBatch": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/batch-imports?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: "{}",
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "listBatches": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/batch-imports?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "addItemsToBatch": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const batchItems = this.getNodeParameter("batchItems", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              body: batchItems,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "modifyItemsInBatch": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const batchItems = this.getNodeParameter("batchItems", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "PATCH",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: batchItems,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "deleteItemsFromBatch": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const batchItems = this.getNodeParameter("batchItems", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: batchItems,
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "submitBatchIngestion": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: "{}",
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "getBatchIngestionStatus": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const ingestionId = this.getNodeParameter("ingestionId", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/ingestions/${encodeURIComponent(ingestionId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "listBatchIngestions": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "deleteBatch": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const batchId = this.getNodeParameter("batchId", i) as string;
+            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
           case "upsertItems": {
             const productData = this.getNodeParameter(
               "contentData",
