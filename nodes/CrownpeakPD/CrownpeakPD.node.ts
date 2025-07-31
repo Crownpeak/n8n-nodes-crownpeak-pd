@@ -176,6 +176,11 @@ export class CrownpeakPD implements INodeType {
           value: "deleteBatch",
           action: "Delete batch",
         },
+        {
+          name: "Delete Batch Ingestion",
+          value: "deleteBatchIngestion",
+          action: "Delete batch ingestion",
+        },
       ],
       default: "upsertItems",
       },
@@ -514,14 +519,26 @@ export class CrownpeakPD implements INodeType {
               "addItemsToBatch",
               "modifyItemsInBatch",
               "deleteItemsFromBatch",
-              "submitBatchIngestion",
               "getBatchIngestionStatus",
-              "listBatchIngestions",
               "deleteBatch"
             ],
           },
         },
         default: "",
+      },
+      {
+        displayName: "Request Body",
+        name: "customBody",
+        type: "json",
+        required: true,
+        default: "",
+        description: "Raw JSON body for batch ingestion. Paste the full JSON object here.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
       },
       {
         displayName: "Batch Items",
@@ -545,7 +562,7 @@ export class CrownpeakPD implements INodeType {
         displayOptions: {
           show: {
             resource: ["items"],
-            operation: ["getBatchIngestionStatus"],
+            operation: ["getBatchIngestionStatus", "deleteBatchIngestion"],
           },
         },
         default: "",
@@ -822,15 +839,16 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
             const batchItems = this.getNodeParameter("batchItems", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const url = `https://items.attraqt.io/batch-imports?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=false&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
               },
               body: batchItems,
-              json: true,
+              json: false,
             };
             responseData = await this.helpers.request(options);
             break;
@@ -841,7 +859,7 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
             const batchItems = this.getNodeParameter("batchItems", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const url = `https://items.attraqt.io/batch-imports/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
               method: "PATCH",
               url,
@@ -861,9 +879,9 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
             const batchItems = this.getNodeParameter("batchItems", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const url = `https://items.attraqt.io/batch-imports/items/delete?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
-              method: "DELETE",
+              method: "POST",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
@@ -878,9 +896,22 @@ export class CrownpeakPD implements INodeType {
           case "submitBatchIngestion": {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
+            const customBody = this.getNodeParameter("customBody", i, "") as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i, false) as boolean;
             const bearerToken = await getBearerToken(this);
-            const batchId = this.getNodeParameter("batchId", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            let url = `https://items.attraqt.io/batch-imports/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            if (typeof fhrValidation !== 'undefined') {
+              url += `&fhrValidation=${fhrValidation}`;
+            }
+            if (!customBody || customBody.trim() === "") {
+              throw new NodeOperationError(this.getNode(), "You must provide a valid JSON object in the 'customBody' field for submitBatchIngestion.");
+            }
+            let body: any;
+            try {
+              body = JSON.parse(customBody);
+            } catch (err) {
+              throw new NodeOperationError(this.getNode(), `Invalid JSON in customBody: ${err}`);
+            }
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
@@ -888,7 +919,7 @@ export class CrownpeakPD implements INodeType {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
               },
-              body: "{}",
+              body,
               json: true,
             };
             responseData = await this.helpers.request(options);
@@ -898,9 +929,8 @@ export class CrownpeakPD implements INodeType {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
             const bearerToken = await getBearerToken(this);
-            const batchId = this.getNodeParameter("batchId", i) as string;
             const ingestionId = this.getNodeParameter("ingestionId", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/ingestions/${encodeURIComponent(ingestionId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const url = `https://items.attraqt.io/batch-imports/ingestions/${encodeURIComponent(ingestionId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
             const options: IHttpRequestOptions = {
               method: "GET",
               url,
@@ -914,10 +944,20 @@ export class CrownpeakPD implements INodeType {
           }
           case "listBatchIngestions": {
             const tenant = this.getNodeParameter("tenant", i) as string;
-            const environment = this.getNodeParameter("environment", i) as string;
+            const environment = this.getNodeParameter("environment", i, "") as string;
+            const lookbackDuration = this.getNodeParameter("lookback_duration", i, "") as string;
+            const status = this.getNodeParameter("status", i, "") as string;
             const bearerToken = await getBearerToken(this);
-            const batchId = this.getNodeParameter("batchId", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            let url = `https://items.attraqt.io/batch-imports/ingestions?tenant=${encodeURIComponent(tenant)}`;
+            if (environment) {
+              url += `&environment=${encodeURIComponent(environment)}`;
+            }
+            if (lookbackDuration) {
+              url += `&lookback_duration=${encodeURIComponent(lookbackDuration)}`;
+            }
+            if (status) {
+              url += `&status=${encodeURIComponent(status)}`;
+            }
             const options: IHttpRequestOptions = {
               method: "GET",
               url,
@@ -945,6 +985,26 @@ export class CrownpeakPD implements INodeType {
               json: true,
             };
             responseData = await this.helpers.request(options);
+            break;
+          }
+
+          case "deleteBatchIngestion": {
+            const tenant = this.getNodeParameter("tenant", i) as string;
+            const environment = this.getNodeParameter("environment", i) as string;
+            const ingestionId = this.getNodeParameter("ingestionId", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/batch-imports/ingestions/${encodeURIComponent(ingestionId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "DELETE",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            await this.helpers.request(options);
+            responseData = { deleted: true };
             break;
           }
           case "upsertItems": {
