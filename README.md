@@ -30,11 +30,12 @@ This module is useful for organizations looking to build automated product onboa
 
 | Resource         | Operations Supported                  |
 |------------------|----------------------------------------|
-| Product Items    | Get, Create, Update, Delete, Upsert    |
-| Catalogs         | Get, Create, Update                    |
-| Item Schemas     | Create, Get, Delete                    |
-| Category Tree    | Get, Create, Delete                    |
-| Locales          | Set, Get                               |
+| Authentication   | Get Token                             |
+| Product Items    | Get, Create, Update, Delete, Upsert, Batch Operations |
+| Item Schemas     | Create, Get, Update, Delete           |
+| Catalogs         | Get, Create, Delete, Activate, List  |
+| Category Tree    | Get, Create, Update, Delete, List    |
+| Locales          | Set, Get, Delete                      |
 
 
 | Feature | Method | Endpoint | Description |
@@ -47,6 +48,16 @@ This module is useful for organizations looking to build automated product onboa
 | Update an Item Schema | PUT | /item-schemas/{name} | Update an existing item schema |
 | Delete an Item Schema | DELETE | /item-schemas/{name}/{version} | Delete an item schema |
 | Get an Item Schema | GET | /item-schemas/{name}/{version} | Get an item schema by name and version |
+| Create Batch | POST | /batch-imports | Create a new batch for item operations |
+| List Batches | GET | /batch-imports | List all batches |
+| Add Items to Batch | POST | /batch-imports | Add items to an existing batch |
+| Modify Items in Batch | PATCH | /batch-imports/items | Modify items in an existing batch |
+| Delete Items from Batch | DELETE | /batch-imports/items/delete | Delete items from an existing batch |
+| Submit Batch Ingestion | POST | /batch-imports/ingestion | Submit batch for processing |
+| Get Batch Ingestion Status | GET | /batch-imports/ingestion/{id} | Get status of batch ingestion |
+| List Batch Ingestions | GET | /batch-imports/ingestion | List all batch ingestions |
+| Delete Batch | DELETE | /batch-imports/{id} | Delete a batch |
+| Delete Batch Ingestion | DELETE | /batch-imports/ingestion/{id} | Delete a batch ingestion |
 | Create a Catalog | POST | /catalogs | Create a new catalog |
 | Delete a Catalog | DELETE | /catalogs/{name}/{version} | Delete an inactive catalog |
 | Activate a Catalog Version | PUT | /catalogs/{name}/{version}/activate | Activate a catalog version |
