@@ -112,6 +112,56 @@ export const crownpeakPDOperations: INodeProperties[] = [
         value: "upsertItems",
         action: "Upsert items",
       },
+      {
+        name: "Create Batch",
+        value: "createBatch",
+        action: "Create a new batch",
+      },
+      {
+        name: "List Batches",
+        value: "listBatches",
+        action: "List all batches",
+      },
+      {
+        name: "Add Items to Batch",
+        value: "addItemsToBatch",
+        action: "Add items to a batch",
+      },
+      {
+        name: "Modify Items in Batch",
+        value: "modifyItemsInBatch",
+        action: "Modify items in a batch",
+      },
+      {
+        name: "Delete Items from Batch",
+        value: "deleteItemsFromBatch",
+        action: "Delete items from a batch",
+      },
+      {
+        name: "Submit Batch for Ingestion",
+        value: "submitBatchIngestion",
+        action: "Submit batch for ingestion",
+      },
+      {
+        name: "Get Batch Ingestion Status",
+        value: "getBatchIngestionStatus",
+        action: "Get batch ingestion status",
+      },
+      {
+        name: "List Batch Ingestions",
+        value: "listBatchIngestions",
+        action: "List batch ingestions",
+      },
+      {
+        name: "Delete Batch",
+        value: "deleteBatch",
+        action: "Delete a batch",
+      },
+      {
+        name: "Delete Batch Ingestion",
+        value: "deleteBatchIngestion",
+        action: "Delete batch ingestion",
+      },
     ],
     default: "upsertItems",
   },
