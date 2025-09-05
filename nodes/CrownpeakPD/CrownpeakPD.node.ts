@@ -172,11 +172,6 @@ export class CrownpeakPD implements INodeType {
           action: "List batch ingestions",
         },
         {
-          name: "Delete Batch",
-          value: "deleteBatch",
-          action: "Delete batch",
-        },
-        {
           name: "Delete Batch Ingestion",
           value: "deleteBatchIngestion",
           action: "Delete batch ingestion",
@@ -204,6 +199,11 @@ export class CrownpeakPD implements INodeType {
             name: "Create a Catalog",
             value: "createCatalog",
             action: "Create a catalog",
+          },
+          {
+            name: "Create Catalog With Default Batch",
+            value: "createDefaultCatalogBatch",
+            action: "Create a catalog with default batch",
           },
           {
             name: "Delete Catalog",
@@ -518,21 +518,117 @@ export class CrownpeakPD implements INodeType {
             operation: [
               "addItemsToBatch",
               "modifyItemsInBatch",
-              "deleteItemsFromBatch",
-              "getBatchIngestionStatus",
-              "deleteBatch"
+              "deleteItemsFromBatch"
             ],
           },
         },
         default: "",
       },
       {
-        displayName: "Request Body",
-        name: "customBody",
-        type: "json",
+        displayName: "Batch Import ID",
+        name: "batchImportId",
+        type: "string",
+        required: false,
+        default: "",
+        description: "Batch ID returned by the batch creation call. Leave empty when ingesting the default catalog batch.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "Catalog Version",
+        name: "submissionCatalogVersion",
+        type: "string",
         required: true,
         default: "",
-        description: "Raw JSON body for batch ingestion. Paste the full JSON object here.",
+        description: "Required. Version of the catalog in which the batch must be ingested (e.g., '11').",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "Promote Catalog on Completion",
+        name: "promoteCatalogOnCompletion",
+        type: "boolean",
+        required: false,
+        default: false,
+        description: "Whether the catalog must be promoted after having been loaded.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "Minimum Item Count",
+        name: "minItemCount",
+        type: "number",
+        required: false,
+        default: 0,
+        description: "Minimum number of items in the batch that should pass schema validation. Ingestion will fail if this threshold is not reached.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "Minimum Success Rate Percent",
+        name: "minSuccessRatePercent",
+        type: "number",
+        required: false,
+        default: 0,
+        description: "Minimum percentage of items in the batch that should pass schema validation. Ingestion will fail if this threshold is not reached.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "Source",
+        name: "source",
+        type: "string",
+        required: false,
+        default: "",
+        description: "Source of items in the batch, can be any string. This field is only meaningful when used in conjunction with deleteMissingItems.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "Delete Missing Items",
+        name: "deleteMissingItems",
+        type: "boolean",
+        required: false,
+        default: false,
+        description: "Whether items with same source present in the catalog but not present in the batch must be deleted.",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["submitBatchIngestion"],
+          },
+        },
+      },
+      {
+        displayName: "FHR Validation",
+        name: "submissionFhrValidation",
+        type: "boolean",
+        required: false,
+        default: false,
+        description: "Enable FHR validation for the request.",
         displayOptions: {
           show: {
             resource: ["items"],
@@ -543,7 +639,7 @@ export class CrownpeakPD implements INodeType {
       {
         displayName: "Batch Items",
         name: "batchItems",
-        type: "string",
+        type: "json",
         required: true,
         displayOptions: {
           show: {
@@ -551,7 +647,7 @@ export class CrownpeakPD implements INodeType {
             operation: ["addItemsToBatch", "modifyItemsInBatch", "deleteItemsFromBatch"],
           },
         },
-        default: "",
+        default: "[]",
         description: "JSON array of items to add/modify/delete in the batch.",
       },
       {
@@ -566,6 +662,56 @@ export class CrownpeakPD implements INodeType {
           },
         },
         default: "",
+      },
+      {
+        displayName: "Lookback Duration",
+        name: "lookback_duration",
+        type: "string",
+        required: false,
+        default: "",
+        description: "Optional lookback duration for filtering ingestions (e.g., '7d', '24h')",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["listBatchIngestions"],
+          },
+        },
+      },
+      {
+        displayName: "Status",
+        name: "status",
+        type: "options",
+        required: false,
+        default: "",
+        options: [
+          {
+            name: "All",
+            value: "",
+          },
+          {
+            name: "Pending",
+            value: "pending",
+          },
+          {
+            name: "Running",
+            value: "running",
+          },
+          {
+            name: "Completed",
+            value: "completed",
+          },
+          {
+            name: "Failed",
+            value: "failed",
+          },
+        ],
+        description: "Filter ingestions by status",
+        displayOptions: {
+          show: {
+            resource: ["items"],
+            operation: ["listBatchIngestions"],
+          },
+        },
       },
       {
         displayName: "Tenant",
@@ -600,7 +746,7 @@ export class CrownpeakPD implements INodeType {
         displayOptions: {
           show: {
             resource: ["catalog"],
-            operation: ["createCatalog"],
+            operation: ["createCatalog", "createDefaultCatalogBatch"],
           },
         },
       },
@@ -836,19 +982,23 @@ export class CrownpeakPD implements INodeType {
           case "addItemsToBatch": {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
-            const batchItems = this.getNodeParameter("batchItems", i) as string;
-            const url = `https://items.attraqt.io/batch-imports?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=false&batch_id=${encodeURIComponent(batchId)}`;
+            const batchItems = this.getNodeParameter("batchItems", i) as IDataObject[];
+
+            const url = `https://items.attraqt.io/batch-imports/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}&batch_id=${encodeURIComponent(batchId)}`;
+            
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
+                "Accept": "application/json; charset=UTF-8",
               },
               body: batchItems,
-              json: false,
+              json: true,
             };
             responseData = await this.helpers.request(options);
             break;
@@ -856,16 +1006,19 @@ export class CrownpeakPD implements INodeType {
           case "modifyItemsInBatch": {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
-            const batchItems = this.getNodeParameter("batchItems", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&batch_id=${encodeURIComponent(batchId)}`;
+            const batchItems = this.getNodeParameter("batchItems", i) as IDataObject[];
+            
+            const url = `https://items.attraqt.io/batch-imports/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
               method: "PATCH",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
+                "Accept": "application/json; charset=UTF-8",
               },
               body: batchItems,
               json: true,
@@ -876,16 +1029,19 @@ export class CrownpeakPD implements INodeType {
           case "deleteItemsFromBatch": {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
+            const fhrValidation = this.getNodeParameter("fhrValidation", i) as boolean;
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
-            const batchItems = this.getNodeParameter("batchItems", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/items/delete?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&batch_id=${encodeURIComponent(batchId)}`;
+            const batchItems = this.getNodeParameter("batchItems", i) as IDataObject[];
+            
+            const url = `https://items.attraqt.io/batch-imports/items/delete?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
+                "Accept": "application/json; charset=UTF-8",
               },
               body: batchItems,
               json: true,
@@ -896,33 +1052,77 @@ export class CrownpeakPD implements INodeType {
           case "submitBatchIngestion": {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
-            const customBody = this.getNodeParameter("customBody", i, "") as string;
-            const fhrValidation = this.getNodeParameter("fhrValidation", i, false) as boolean;
+            const batchImportId = this.getNodeParameter("batchImportId", i, "") as string;
+            const catalogVersion = this.getNodeParameter("submissionCatalogVersion", i) as string;
+            const promoteCatalogOnCompletion = this.getNodeParameter("promoteCatalogOnCompletion", i, false) as boolean;
+            const minItemCount = this.getNodeParameter("minItemCount", i, 0) as number;
+            const minSuccessRatePercent = this.getNodeParameter("minSuccessRatePercent", i, 0) as number;
+            const source = this.getNodeParameter("source", i, "") as string;
+            const deleteMissingItems = this.getNodeParameter("deleteMissingItems", i, false) as boolean;
+            const fhrValidation = this.getNodeParameter("submissionFhrValidation", i, false) as boolean;
             const bearerToken = await getBearerToken(this);
+
+            if (!catalogVersion) {
+              throw new NodeOperationError(this.getNode(), "catalogVersion is required for batch ingestion.");
+            }
+
+            const body: any = {};
+
+            if (batchImportId) {
+              body.batchImportId = batchImportId;
+            }
+
+            body.catalogVersion = catalogVersion.toString();
+
+            if (typeof promoteCatalogOnCompletion !== 'undefined') {
+              body.promoteCatalogOnCompletion = promoteCatalogOnCompletion;
+            }
+
+            if (minItemCount !== undefined && minItemCount !== null) {
+              body.minItemCount = parseInt(minItemCount.toString(), 10);
+            }
+
+            if (minSuccessRatePercent !== undefined && minSuccessRatePercent !== null) {
+              body.minSuccessRatePercent = parseFloat(minSuccessRatePercent.toString());
+            }
+
+            if (source) {
+              body.source = source;
+            }
+
+            if (typeof deleteMissingItems !== 'undefined') {
+              body.deleteMissingItems = deleteMissingItems;
+            }
+
             let url = `https://items.attraqt.io/batch-imports/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            
             if (typeof fhrValidation !== 'undefined') {
               url += `&fhrValidation=${fhrValidation}`;
             }
-            if (!customBody || customBody.trim() === "") {
-              throw new NodeOperationError(this.getNode(), "You must provide a valid JSON object in the 'customBody' field for submitBatchIngestion.");
-            }
-            let body: any;
-            try {
-              body = JSON.parse(customBody);
-            } catch (err) {
-              throw new NodeOperationError(this.getNode(), `Invalid JSON in customBody: ${err}`);
-            }
+
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
+                "Accept": "application/json; charset=UTF-8",
               },
               body,
               json: true,
             };
-            responseData = await this.helpers.request(options);
+
+            try {
+              responseData = await this.helpers.request(options);
+            } catch (error) {
+              if (error instanceof Error && error.message && error.message.includes('Invalid UUID string')) {
+                throw new NodeOperationError(
+                  this.getNode(),
+                  `Failed to submit batch ingestion for catalog version ${body.catalogVersion}. This might indicate that no batch exists for this catalog version, the catalog version doesn't exist, or the batchImportId is invalid. Please ensure you have created a catalog and associated batch first.`
+                );
+              }
+              throw error;
+            }
             break;
           }
           case "getBatchIngestionStatus": {
@@ -963,24 +1163,6 @@ export class CrownpeakPD implements INodeType {
               url,
               headers: {
                 Authorization: `Bearer ${bearerToken}`,
-              },
-              json: true,
-            };
-            responseData = await this.helpers.request(options);
-            break;
-          }
-          case "deleteBatch": {
-            const tenant = this.getNodeParameter("tenant", i) as string;
-            const environment = this.getNodeParameter("environment", i) as string;
-            const bearerToken = await getBearerToken(this);
-            const batchId = this.getNodeParameter("batchId", i) as string;
-            const url = `https://items.attraqt.io/batch-imports/${encodeURIComponent(batchId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
-            const options: IHttpRequestOptions = {
-              method: "DELETE",
-              url,
-              headers: {
-                Authorization: `Bearer ${bearerToken}`,
-                "Content-Type": "application/json",
               },
               json: true,
             };
@@ -1364,6 +1546,61 @@ export class CrownpeakPD implements INodeType {
             };
             break;
           }
+          case "createDefaultCatalogBatch": {
+            const catalogData = this.getNodeParameter(
+              "catalogData",
+              i
+            ) as string;
+            const tenant = this.getNodeParameter("catalogTenant", i) as string;
+            const environment = this.getNodeParameter(
+              "catalogEnvironment",
+              i
+            ) as string;
+
+            let body;
+            try {
+              body = JSON.parse(catalogData);
+            } catch (error) {
+              throw new NodeOperationError(
+                this.getNode(),
+                'Invalid JSON in catalog data',
+                { itemIndex: i }
+              );
+            }
+
+            const url = `https://items.attraqt.io/catalogs?createBatchImport=true&tenant=${encodeURIComponent(
+              tenant
+            )}&environment=${encodeURIComponent(environment)}`;
+            const bearerToken = await getBearerToken(this);
+            const options: IHttpRequestOptions = {
+              method: "POST",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json; charset=UTF-8",
+              },
+              body: JSON.stringify(body),
+              json: true,
+            };
+
+            const response = await this.helpers.request(options);
+            const catalogVersion =
+              response?.version || response?.catalogVersion || "unknown";
+            
+            responseData = {
+              ...response,
+              defaultBatchId: catalogVersion,
+              message: "Catalog created with default batch. The batch ID is identical to the catalog version.",
+              success: true,
+              catalogVersion: catalogVersion,
+              tenant: tenant,
+              environment: environment,
+              status: "inactive",
+              note: "New catalogs are created as inactive. Use 'Activate Catalog' to activate it.",
+            };
+            break;
+          }
           case "deleteCatalog": {
             const catalogVersion = this.getNodeParameter(
               "catalogVersion",
@@ -1451,8 +1688,7 @@ export class CrownpeakPD implements INodeType {
               },
               json: true,
             };
-            await this.helpers.request(options);
-            responseData = { deleted: true };
+            responseData = await this.helpers.request(options);
             break;
           }
           case "listCatalogs": {
