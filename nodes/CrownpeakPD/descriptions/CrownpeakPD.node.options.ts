@@ -153,11 +153,6 @@ export const crownpeakPDOperations: INodeProperties[] = [
         action: "List batch ingestions",
       },
       {
-        name: "Delete Batch",
-        value: "deleteBatch",
-        action: "Delete a batch",
-      },
-      {
         name: "Delete Batch Ingestion",
         value: "deleteBatchIngestion",
         action: "Delete batch ingestion",

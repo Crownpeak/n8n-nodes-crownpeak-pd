@@ -33,7 +33,7 @@ This module is useful for organizations looking to build automated product onboa
 | Authentication   | Get Token                             |
 | Product Items    | Get, Create, Update, Delete, Upsert, Batch Operations |
 | Item Schemas     | Create, Get, Update, Delete           |
-| Catalogs         | Get, Create, Delete, Activate, List  |
+| Catalogs         | Get, Create, Create with Default Batch, Delete, Activate, List  |
 | Category Tree    | Get, Create, Update, Delete, List    |
 | Locales          | Set, Get, Delete                      |
 
@@ -56,9 +56,9 @@ This module is useful for organizations looking to build automated product onboa
 | Submit Batch Ingestion | POST | /batch-imports/ingestion | Submit batch for processing |
 | Get Batch Ingestion Status | GET | /batch-imports/ingestion/{id} | Get status of batch ingestion |
 | List Batch Ingestions | GET | /batch-imports/ingestion | List all batch ingestions |
-| Delete Batch | DELETE | /batch-imports/{id} | Delete a batch |
 | Delete Batch Ingestion | DELETE | /batch-imports/ingestion/{id} | Delete a batch ingestion |
 | Create a Catalog | POST | /catalogs | Create a new catalog |
+| Create Catalog With Default Batch | POST | /catalogs?createBatchImport=true | Create a catalog and automatically create a default batch with ID matching the catalog version |
 | Delete a Catalog | DELETE | /catalogs/{name}/{version} | Delete an inactive catalog |
 | Activate a Catalog Version | PUT | /catalogs/{name}/{version}/activate | Activate a catalog version |
 | Get Active Catalog Version | GET | /catalogs/{name}/active | Get the currently active catalog version |

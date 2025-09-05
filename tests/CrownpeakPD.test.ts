@@ -46,6 +46,7 @@ describe('CrownpeakPD Node', () => {
     expect(getOperationValues('catalog')).toEqual(
       expect.arrayContaining([
         'createCatalog',
+        'createDefaultCatalogBatch',
         'listCatalogs',
         'getActiveCatalog',
         'activateCatalog',
