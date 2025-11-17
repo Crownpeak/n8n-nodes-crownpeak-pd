@@ -902,7 +902,9 @@ export class CrownpeakPD implements INodeType {
       const credentials = await self.getCredentials("crownpeakPDApi");
       const username = credentials.username as string;
       const password = credentials.password as string;
-      const authUrl = credentials.authUrl as string;
+      const tenantId = credentials.tenantId as string;
+      let authUrl = credentials.authUrl as string;
+      authUrl = authUrl.replace('{tenantId}', tenantId);
       const basicAuth = Buffer.from(`${username}:${password}`).toString(
         "base64"
       );
@@ -1287,7 +1289,9 @@ export class CrownpeakPD implements INodeType {
             const credentials = await this.getCredentials("crownpeakPDApi");
             const username = credentials.username as string;
             const password = credentials.password as string;
-            const authUrl = credentials.authUrl as string;
+            const tenantId = credentials.tenantId as string;
+            let authUrl = credentials.authUrl as string;
+            authUrl = authUrl.replace('{tenantId}', tenantId);
             const basicAuth = Buffer.from(`${username}:${password}`).toString(
               "base64"
             );
