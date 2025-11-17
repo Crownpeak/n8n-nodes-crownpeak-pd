@@ -27,13 +27,22 @@ export class CrownpeakPDApi implements ICredentialType {
       required: true,
     },
     {
+      displayName: "Tenant ID",
+      name: "tenantId",
+      type: "string",
+      default: "solutions",
+      placeholder: "solutions",
+      description: "The tenant ID for the authentication realm",
+      required: true,
+    },
+    {
       displayName: "Auth URL",
       name: "authUrl",
       type: "string",
       default:
-        "https://iam.attraqt.io/auth/realms/solutions/protocol/openid-connect/token",
+        "https://iam.attraqt.io/auth/realms/{tenantId}/protocol/openid-connect/token",
       placeholder:
-        "https://iam.attraqt.io/auth/realms/solutions/protocol/openid-connect/token",
+        "https://iam.attraqt.io/auth/realms/{tenantId}/protocol/openid-connect/token",
       description: "The OAuth2 token endpoint URL",
       required: true,
     },
