@@ -31,46 +31,95 @@ This module is useful for organizations looking to build automated product onboa
 | Resource         | Operations Supported                  |
 |------------------|----------------------------------------|
 | Authentication   | Get Token                             |
-| Product Items    | Get, Create, Update, Delete, Upsert, Batch Operations |
+| Schema           | List All Schemas                      |
+| Product Items    | Upsert, Patch, Delete                 |
 | Item Schemas     | Create, Get, Update, Delete           |
-| Catalogs         | Get, Create, Create with Default Batch, Delete, Activate, List  |
-| Category Tree    | Get, Create, Update, Delete, List    |
-| Locales          | Set, Get, Delete                      |
+| Batch Operations | Create, List, Add Items, Modify Items, Delete Items, Submit Ingestion, Get Status, List Ingestions, Delete Ingestion |
+| Catalogs         | List, Get Active, Create, Create with Default Batch, Activate, Delete  |
+| Category Tree    | List, Get, Create, Update, Delete     |
+| Locales          | Get, Set, Delete                      |
+| Feedback         | Catalog Activation Statistics, Created Catalog Versions, Summary of Updates (with various filters), List Updates (with various filters), Single Update Feedback |
 
+---
 
+## Complete API Operations Reference
+
+### Authentication
 | Feature | Method | Endpoint | Description |
 |---------|--------|----------|-------------|
-| Get Token | POST | /auth/realms/solutions/protocol/openid-connect/token | Obtain authentication token |
-| Upsert Items | POST | /items | Create a new product item |
-| Patch Items | PATCH | /items | Update existing product item attributes |
-| Delete Items | DELETE | /items | Delete product item |
+| Get Token | POST | /auth/realms/{tenantId}/protocol/openid-connect/token | Obtain OAuth2 authentication token |
+
+### Schema Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
+| List All Schemas | GET | /item-schemas | List all item schemas for a tenant/environment |
+
+### Item Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
+| Upsert Items | POST | /items | Create or update product items |
+| Patch Items | PATCH | /items | Partially update existing product items |
+| Delete Items | POST | /items/delete | Delete product items |
+
+### Item Schema Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
 | Create an Item Schema | POST | /item-schemas | Create a new item schema |
 | Update an Item Schema | PUT | /item-schemas/{name} | Update an existing item schema |
-| Delete an Item Schema | DELETE | /item-schemas/{name}/{version} | Delete an item schema |
 | Get an Item Schema | GET | /item-schemas/{name}/{version} | Get an item schema by name and version |
-| Create Batch | POST | /batch-imports | Create a new batch for item operations |
+| Delete an Item Schema | DELETE | /item-schemas/{name}/{version} | Delete an item schema |
+
+### Batch Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
+| Create Batch | POST | /batch-imports | Create a new batch for bulk item operations |
 | List Batches | GET | /batch-imports | List all batches |
-| Add Items to Batch | POST | /batch-imports | Add items to an existing batch |
+| Add Items to Batch | POST | /batch-imports/items | Add items to an existing batch |
 | Modify Items in Batch | PATCH | /batch-imports/items | Modify items in an existing batch |
-| Delete Items from Batch | DELETE | /batch-imports/items/delete | Delete items from an existing batch |
-| Submit Batch Ingestion | POST | /batch-imports/ingestion | Submit batch for processing |
-| Get Batch Ingestion Status | GET | /batch-imports/ingestion/{id} | Get status of batch ingestion |
-| List Batch Ingestions | GET | /batch-imports/ingestion | List all batch ingestions |
-| Delete Batch Ingestion | DELETE | /batch-imports/ingestion/{id} | Delete a batch ingestion |
-| Create a Catalog | POST | /catalogs | Create a new catalog |
-| Create Catalog With Default Batch | POST | /catalogs?createBatchImport=true | Create a catalog and automatically create a default batch with ID matching the catalog version |
-| Delete a Catalog | DELETE | /catalogs/{name}/{version} | Delete an inactive catalog |
-| Activate a Catalog Version | PUT | /catalogs/{name}/{version}/activate | Activate a catalog version |
-| Get Active Catalog Version | GET | /catalogs/{name}/active | Get the currently active catalog version |
+| Delete Items from Batch | POST | /batch-imports/items/delete | Delete items from an existing batch |
+| Submit Batch Ingestion | POST | /batch-imports/ingestions | Submit batch for processing into a catalog |
+| Get Batch Ingestion Status | GET | /batch-imports/ingestions/{id} | Get status of a specific batch ingestion |
+| List Batch Ingestions | GET | /batch-imports/ingestions | List all batch ingestions with optional filters |
+| Delete Batch Ingestion | DELETE | /batch-imports/ingestions/{id} | Delete a batch ingestion |
+
+### Catalog Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
 | List Catalogs | GET | /catalogs | List all catalogs |
-| Create a Category Tree | POST | /category-trees | Create a new category tree |
-| Update a Category Tree | PUT | /category-trees/{name} | Update an existing category tree |
+| Get Active Catalog Version | GET | /catalogs/active | Get the currently active catalog version |
+| Create a Catalog | POST | /catalogs | Create a new catalog version |
+| Create Catalog With Default Batch | POST | /catalogs?createBatchImport=true | Create a catalog and automatically create a default batch (batch_id = catalog version) |
+| Activate a Catalog Version | POST | /catalogs/activate/{version} | Activate a specific catalog version |
+| Delete Catalog | DELETE | /catalogs/{version} | Delete an inactive catalog version |
+
+### Category Tree Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
 | List Category Trees | GET | /category-trees | List all category trees |
 | Get a Category Tree | GET | /category-trees/{name}/{version} | Get a category tree by name and version |
+| Create a Category Tree | POST | /category-trees | Create a new category tree |
+| Update a Category Tree | PUT | /category-trees/{name} | Update an existing category tree |
 | Delete a Category Tree | DELETE | /category-trees/{name}/{version} | Delete a category tree |
-| Set Default Locale | POST | /locales | Set the default locale for an item schema |
-| Get Default Locale | GET | /locales/{name} | Get the default locale for an item schema |
-| Delete Default Locale | DELETE | /locales/{name} | Delete the default locale for an item schema |
+
+### Locale Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
+| Get Default Locale | GET | /locales/default | Get the default locale |
+| Set Default Locale | POST | /locales/default | Set the default locale |
+| Delete Default Locale | DELETE | /locales/default | Delete the default locale |
+
+### Feedback Operations
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
+| Catalog Activation Statistics | GET | /feedback/catalog-version/{version}/full/statistics | Get catalog creation and activation statistics |
+| Created Catalog Versions | GET | /feedback/catalog-version | Get history of created catalog versions |
+| Summary of Updates | GET | /feedback/catalog-version/{version}/updates/statistics/summary/relative | Get summary of updates in the last specified period |
+| Summary of Updates (Time Window) | GET | /feedback/catalog-version/{version}/updates/statistics/summary/absolute | Get summary of updates within a specific time window |
+| Summary of Updates (By State) | GET | /feedback/catalog-version/{version}/updates/statistics/summary/{state}/relative | Get summary of updates with specified state (SUCCESS/FAILURE/PENDING) in the last period |
+| Summary of Updates (By State & Time) | GET | /feedback/catalog-version/{version}/updates/statistics/summary/{state}/absolute | Get summary of updates with specified state within a time window |
+| List Updates (By State) | GET | /feedback/catalog-version/{version}/updates/statistics/details/{state}/relative | Get detailed list of updates with specified state in the last period |
+| List Updates (By State & Time) | GET | /feedback/catalog-version/{version}/updates/statistics/details/{state}/absolute | Get detailed list of updates with specified state within a time window |
+| Single Update Feedback | GET | /feedback/catalog-version/{version}/updates/{receiptId} | Get detailed feedback for a specific update by receipt ID |
 
 Each method supports query parameterization using dynamic expressions and securely authenticates using credentials.
 

@@ -13,6 +13,16 @@ export const crownpeakPDOperations: INodeProperties[] = [
         action: "Activate a catalog version",
       },
       {
+        name: "Add Items to Batch",
+        value: "addItemsToBatch",
+        action: "Add items to a batch",
+      },
+      {
+        name: "Catalog Activation Statistics",
+        value: "catalogActivationStats",
+        action: "Get catalog activation statistics",
+      },
+      {
         name: "Create a Catalog",
         value: "createCatalog",
         action: "Create a catalog",
@@ -26,6 +36,16 @@ export const crownpeakPDOperations: INodeProperties[] = [
         name: "Create an Item Schema",
         value: "createItemSchema",
         action: "Create an item schema",
+      },
+      {
+        name: "Create Batch",
+        value: "createBatch",
+        action: "Create a new batch",
+      },
+      {
+        name: "Created Catalog Versions",
+        value: "createdCatalogVersions",
+        action: "Get created catalog versions",
       },
       {
         name: "Delete a Catalog",
@@ -43,6 +63,11 @@ export const crownpeakPDOperations: INodeProperties[] = [
         action: "Delete an item schema",
       },
       {
+        name: "Delete Batch Ingestion",
+        value: "deleteBatchIngestion",
+        action: "Delete batch ingestion",
+      },
+      {
         name: "Delete Default Locale",
         value: "deleteDefaultLocale",
         action: "Delete default locale",
@@ -51,6 +76,11 @@ export const crownpeakPDOperations: INodeProperties[] = [
         name: "Delete Items",
         value: "deleteItems",
         action: "Delete items",
+      },
+      {
+        name: "Delete Items from Batch",
+        value: "deleteItemsFromBatch",
+        action: "Delete items from a batch",
       },
       {
         name: "Get a Category Tree",
@@ -68,6 +98,11 @@ export const crownpeakPDOperations: INodeProperties[] = [
         action: "Get an item schema",
       },
       {
+        name: "Get Batch Ingestion Status",
+        value: "getBatchIngestionStatus",
+        action: "Get batch ingestion status",
+      },
+      {
         name: "Get Default Locale",
         value: "getDefaultLocale",
         action: "Get default locale",
@@ -76,6 +111,21 @@ export const crownpeakPDOperations: INodeProperties[] = [
         name: "Get Token",
         value: "getToken",
         action: "Get token",
+      },
+      {
+        name: "List All Schemas",
+        value: "listSchemas",
+        action: "List all schemas",
+      },
+      {
+        name: "List Batches",
+        value: "listBatches",
+        action: "List all batches",
+      },
+      {
+        name: "List Batch Ingestions",
+        value: "listBatchIngestions",
+        action: "List batch ingestions",
       },
       {
         name: "List Catalogs",
@@ -88,6 +138,21 @@ export const crownpeakPDOperations: INodeProperties[] = [
         action: "List category trees",
       },
       {
+        name: "List Updates (By State)",
+        value: "listUpdatesByState",
+        action: "Get list of updates with specified state",
+      },
+      {
+        name: "List Updates (By State & Time)",
+        value: "listUpdatesByStateTime",
+        action: "Get list of updates with state and time window",
+      },
+      {
+        name: "Modify Items in Batch",
+        value: "modifyItemsInBatch",
+        action: "Modify items in a batch",
+      },
+      {
         name: "Patch Items",
         value: "patchItems",
         action: "Patch items",
@@ -96,6 +161,36 @@ export const crownpeakPDOperations: INodeProperties[] = [
         name: "Set Default Locale",
         value: "setDefaultLocale",
         action: "Set default locale",
+      },
+      {
+        name: "Single Update Feedback",
+        value: "singleUpdateFeedback",
+        action: "Get single update feedback",
+      },
+      {
+        name: "Submit Batch for Ingestion",
+        value: "submitBatchIngestion",
+        action: "Submit batch for ingestion",
+      },
+      {
+        name: "Summary of Updates",
+        value: "summaryOfUpdates",
+        action: "Get summary of updates",
+      },
+      {
+        name: "Summary of Updates (By State)",
+        value: "summaryOfUpdatesByState",
+        action: "Get summary of updates with specified state",
+      },
+      {
+        name: "Summary of Updates (By State & Time)",
+        value: "summaryOfUpdatesByStateTime",
+        action: "Get summary of updates with state and time window",
+      },
+      {
+        name: "Summary of Updates (Time Window)",
+        value: "summaryOfUpdatesTimeWindow",
+        action: "Get summary of updates within time window",
       },
       {
         name: "Update a Category Tree",
@@ -111,51 +206,6 @@ export const crownpeakPDOperations: INodeProperties[] = [
         name: "Upsert Items",
         value: "upsertItems",
         action: "Upsert items",
-      },
-      {
-        name: "Create Batch",
-        value: "createBatch",
-        action: "Create a new batch",
-      },
-      {
-        name: "List Batches",
-        value: "listBatches",
-        action: "List all batches",
-      },
-      {
-        name: "Add Items to Batch",
-        value: "addItemsToBatch",
-        action: "Add items to a batch",
-      },
-      {
-        name: "Modify Items in Batch",
-        value: "modifyItemsInBatch",
-        action: "Modify items in a batch",
-      },
-      {
-        name: "Delete Items from Batch",
-        value: "deleteItemsFromBatch",
-        action: "Delete items from a batch",
-      },
-      {
-        name: "Submit Batch for Ingestion",
-        value: "submitBatchIngestion",
-        action: "Submit batch for ingestion",
-      },
-      {
-        name: "Get Batch Ingestion Status",
-        value: "getBatchIngestionStatus",
-        action: "Get batch ingestion status",
-      },
-      {
-        name: "List Batch Ingestions",
-        value: "listBatchIngestions",
-        action: "List batch ingestions",
-      },
-      {
-        name: "Delete Batch Ingestion",
-        value: "deleteBatchIngestion",
-        action: "Delete batch ingestion",
       },
     ],
     default: "upsertItems",

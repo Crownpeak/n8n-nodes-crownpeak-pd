@@ -56,12 +56,20 @@ export class CrownpeakPD implements INodeType {
             value: "categoryTree",
           },
           {
+            name: "Feedback",
+            value: "feedback",
+          },
+          {
             name: "Item",
             value: "items",
           },
           {
             name: "Locale",
             value: "locale",
+          },
+          {
+            name: "Schema",
+            value: "schema",
           },
         ],
         default: "items",
@@ -84,6 +92,84 @@ export class CrownpeakPD implements INodeType {
           },
         ],
         default: "getToken",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["schema"],
+          },
+        },
+        options: [
+          {
+            name: "List All Schemas",
+            value: "listSchemas",
+            action: "List all schemas",
+          },
+        ],
+        default: "listSchemas",
+      },
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+          },
+        },
+        options: [
+          {
+            name: "Catalog Activation Statistics",
+            value: "catalogActivationStats",
+            action: "Get catalog activation statistics",
+          },
+          {
+            name: "Created Catalog Versions",
+            value: "createdCatalogVersions",
+            action: "Get created catalog versions",
+          },
+          {
+            name: "Summary of Updates",
+            value: "summaryOfUpdates",
+            action: "Get summary of updates",
+          },
+          {
+            name: "Summary of Updates (Time Window)",
+            value: "summaryOfUpdatesTimeWindow",
+            action: "Get summary of updates within time window",
+          },
+          {
+            name: "Summary of Updates (By State)",
+            value: "summaryOfUpdatesByState",
+            action: "Get summary of updates with specified state",
+          },
+          {
+            name: "Summary of Updates (By State & Time)",
+            value: "summaryOfUpdatesByStateTime",
+            action: "Get summary of updates with state and time window",
+          },
+          {
+            name: "List Updates (By State)",
+            value: "listUpdatesByState",
+            action: "Get list of updates with specified state",
+          },
+          {
+            name: "List Updates (By State & Time)",
+            value: "listUpdatesByStateTime",
+            action: "Get list of updates with state and time window",
+          },
+          {
+            name: "Single Update Feedback",
+            value: "singleUpdateFeedback",
+            action: "Get single update feedback",
+          },
+        ],
+        default: "summaryOfUpdates",
       },
       {
         displayName: "Operation",
@@ -389,6 +475,14 @@ export class CrownpeakPD implements INodeType {
           show: {
             resource: ["items"],
           },
+          hide: {
+            operation: [
+              "createItemSchema",
+              "updateItemSchema",
+              "getItemSchema",
+              "deleteItemSchema",
+            ],
+          },
         },
       },
       {
@@ -401,6 +495,14 @@ export class CrownpeakPD implements INodeType {
           show: {
             resource: ["items"],
           },
+          hide: {
+            operation: [
+              "createItemSchema",
+              "updateItemSchema",
+              "getItemSchema",
+              "deleteItemSchema",
+            ],
+          },
         },
       },
       {
@@ -412,6 +514,14 @@ export class CrownpeakPD implements INodeType {
         displayOptions: {
           show: {
             resource: ["items"],
+          },
+          hide: {
+            operation: [
+              "createItemSchema",
+              "updateItemSchema",
+              "getItemSchema",
+              "deleteItemSchema",
+            ],
           },
         },
       },
@@ -891,6 +1001,177 @@ export class CrownpeakPD implements INodeType {
           },
         },
       },
+      {
+        displayName: "Tenant",
+        name: "schemaTenantList",
+        type: "string",
+        default: "solutions",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["schema"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "schemaEnvironmentList",
+        type: "string",
+        default: "cidp-test",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["schema"],
+          },
+        },
+      },
+      {
+        displayName: "Tenant",
+        name: "feedbackTenant",
+        type: "string",
+        default: "solutions",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+          },
+        },
+      },
+      {
+        displayName: "Environment",
+        name: "feedbackEnvironment",
+        type: "string",
+        default: "cidp-test",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+          },
+        },
+      },
+      {
+        displayName: "Catalog Version",
+        name: "feedbackCatalogVersion",
+        type: "string",
+        default: "",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: [
+              "catalogActivationStats",
+              "summaryOfUpdates",
+              "summaryOfUpdatesTimeWindow",
+              "summaryOfUpdatesByState",
+              "summaryOfUpdatesByStateTime",
+              "listUpdatesByState",
+              "listUpdatesByStateTime",
+              "singleUpdateFeedback",
+            ],
+          },
+        },
+      },
+      {
+        displayName: "State",
+        name: "feedbackState",
+        type: "options",
+        default: "SUCCESS",
+        required: true,
+        options: [
+          { name: "Success", value: "SUCCESS" },
+          { name: "Failure", value: "FAILURE" },
+          { name: "Pending", value: "PENDING" },
+        ],
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: [
+              "summaryOfUpdatesByState",
+              "summaryOfUpdatesByStateTime",
+              "listUpdatesByState",
+              "listUpdatesByStateTime",
+            ],
+          },
+        },
+      },
+      {
+        displayName: "Start Time",
+        name: "feedbackStartTime",
+        type: "string",
+        default: "",
+        required: true,
+        description: "Start time in ISO 8601 format (e.g., 2023-01-01T00:00:00Z)",
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: [
+              "summaryOfUpdatesTimeWindow",
+              "summaryOfUpdatesByStateTime",
+              "listUpdatesByStateTime",
+            ],
+          },
+        },
+      },
+      {
+        displayName: "End Time",
+        name: "feedbackEndTime",
+        type: "string",
+        default: "",
+        required: true,
+        description: "End time in ISO 8601 format (e.g., 2023-12-31T23:59:59Z)",
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: [
+              "summaryOfUpdatesTimeWindow",
+              "summaryOfUpdatesByStateTime",
+              "listUpdatesByStateTime",
+            ],
+          },
+        },
+      },
+      {
+        displayName: "Offset",
+        name: "feedbackOffset",
+        type: "number",
+        default: 0,
+        required: false,
+        description: "Number of items to skip",
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: ["listUpdatesByState", "listUpdatesByStateTime"],
+          },
+        },
+      },
+      {
+        displayName: "Limit",
+        name: "feedbackLimit",
+        type: "number",
+        default: 100,
+        required: false,
+        description: "Maximum number of items to return",
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: ["listUpdatesByState", "listUpdatesByStateTime"],
+          },
+        },
+      },
+      {
+        displayName: "Update ID",
+        name: "feedbackUpdateId",
+        type: "string",
+        default: "",
+        required: true,
+        description: "The ID of the update to retrieve feedback for",
+        displayOptions: {
+          show: {
+            resource: ["feedback"],
+            operation: ["singleUpdateFeedback"],
+          },
+        },
+      },
     ],
   };
 
@@ -947,6 +1228,221 @@ export class CrownpeakPD implements INodeType {
         let responseData: IDataObject = {};
 
         switch (operation) {
+          case "listSchemas": {
+            const tenant = this.getNodeParameter("schemaTenantList", i) as string;
+            const environment = this.getNodeParameter("schemaEnvironmentList", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/item-schemas?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "catalogActivationStats": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/full/statistics?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            try {
+              responseData = await this.helpers.request(options);
+            } catch (error: any) {
+              if (error.statusCode === 404) {
+                throw new NodeOperationError(
+                  this.getNode(),
+                  `No feedback data found for catalog version ${catalogVersion}. The Feedback API only contains data for catalogs that have been processed through the system. Try: 1) Wait a few minutes after activation (processing is asynchronous), 2) Use 'Created Catalog Versions' to see which versions have feedback data, 3) Create a new catalog through batch ingestion workflow.`,
+                  { itemIndex: i }
+                );
+              }
+              throw error;
+            }
+            break;
+          }
+          case "createdCatalogVersions": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&size=100`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            try {
+              responseData = await this.helpers.request(options);
+            } catch (error: any) {
+              if (error.statusCode === 404) {
+                throw new NodeOperationError(
+                  this.getNode(),
+                  `No catalog feedback data found for tenant '${tenant}' in environment '${environment}'. The Feedback API tracks catalog creation and activation events. No catalogs have been processed yet, or the feedback system may take time to update after activation (usually a few minutes). Try activating a catalog and waiting, or contact support if catalogs were recently activated.`,
+                  { itemIndex: i }
+                );
+              }
+              throw error;
+            }
+            break;
+          }
+          case "summaryOfUpdates": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/statistics/summary/relative?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&lastPeriodValue=24&lastPeriodUnit=HOUR&size=100`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "summaryOfUpdatesTimeWindow": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const startTime = this.getNodeParameter("feedbackStartTime", i) as string;
+            const endTime = this.getNodeParameter("feedbackEndTime", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/statistics/summary/absolute?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}&size=100`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "summaryOfUpdatesByState": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const state = this.getNodeParameter("feedbackState", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/statistics/summary/${encodeURIComponent(state)}/relative?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&durationValue=24&durationUnit=HOUR&lastPeriodValue=24&lastPeriodUnit=HOUR`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "summaryOfUpdatesByStateTime": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const state = this.getNodeParameter("feedbackState", i) as string;
+            const startTime = this.getNodeParameter("feedbackStartTime", i) as string;
+            const endTime = this.getNodeParameter("feedbackEndTime", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/statistics/summary/${encodeURIComponent(state)}/absolute?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&durationValue=24&durationUnit=HOUR&startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "listUpdatesByState": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const state = this.getNodeParameter("feedbackState", i) as string;
+            const offset = this.getNodeParameter("feedbackOffset", i, 0) as number;
+            const limit = this.getNodeParameter("feedbackLimit", i, 100) as number;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/statistics/details/${encodeURIComponent(state)}/relative?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&durationValue=24&durationUnit=HOUR&lastPeriodValue=24&lastPeriodUnit=HOUR&from=${offset}&size=${limit}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "listUpdatesByStateTime": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const state = this.getNodeParameter("feedbackState", i) as string;
+            const startTime = this.getNodeParameter("feedbackStartTime", i) as string;
+            const endTime = this.getNodeParameter("feedbackEndTime", i) as string;
+            const offset = this.getNodeParameter("feedbackOffset", i, 0) as number;
+            const limit = this.getNodeParameter("feedbackLimit", i, 100) as number;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/statistics/details/${encodeURIComponent(state)}/absolute?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&durationValue=24&durationUnit=HOUR&startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}&from=${offset}&size=${limit}`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
+          case "singleUpdateFeedback": {
+            const tenant = this.getNodeParameter("feedbackTenant", i) as string;
+            const environment = this.getNodeParameter("feedbackEnvironment", i) as string;
+            const catalogVersion = this.getNodeParameter("feedbackCatalogVersion", i) as string;
+            const updateId = this.getNodeParameter("feedbackUpdateId", i) as string;
+            const bearerToken = await getBearerToken(this);
+            const url = `https://items.attraqt.io/feedback/catalog-version/${encodeURIComponent(catalogVersion)}/updates/${encodeURIComponent(updateId)}?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&size=100`;
+            const options: IHttpRequestOptions = {
+              method: "GET",
+              url,
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "application/json",
+              },
+              json: true,
+            };
+            responseData = await this.helpers.request(options);
+            break;
+          }
           case "createBatch": {
             const tenant = this.getNodeParameter("tenant", i) as string;
             const environment = this.getNodeParameter("environment", i) as string;
@@ -1320,6 +1816,11 @@ export class CrownpeakPD implements INodeType {
               tenant
             )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
+            
+            const schemaObject = typeof schemaData === 'string' ? JSON.parse(schemaData) : schemaData;
+            schemaObject.tenant = tenant;
+            schemaObject.environment = environment;
+            
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
@@ -1327,7 +1828,7 @@ export class CrownpeakPD implements INodeType {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
               },
-              body: schemaData,
+              body: schemaObject,
               json: true,
             };
             responseData = await this.helpers.request(options);
@@ -1347,6 +1848,12 @@ export class CrownpeakPD implements INodeType {
               tenant
             )}&environment=${encodeURIComponent(environment)}`;
             const bearerToken = await getBearerToken(this);
+            
+            const schemaObject = typeof schemaData === 'string' ? JSON.parse(schemaData) : schemaData;
+            schemaObject.tenant = tenant;
+            schemaObject.environment = environment;
+            schemaObject.name = schemaName;
+            
             const options: IHttpRequestOptions = {
               method: "PUT",
               url,
@@ -1354,7 +1861,7 @@ export class CrownpeakPD implements INodeType {
                 Authorization: `Bearer ${bearerToken}`,
                 "Content-Type": "application/json",
               },
-              body: schemaData,
+              body: schemaObject,
               json: true,
             };
             responseData = await this.helpers.request(options);
