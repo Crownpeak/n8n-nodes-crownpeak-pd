@@ -383,7 +383,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Tenant",
         name: "tenant",
         type: "string",
-        default: "solutions",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -395,7 +395,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Environment",
         name: "environment",
         type: "string",
-        default: "cidp-test",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -432,7 +432,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Tenant",
         name: "schemaTenant",
         type: "string",
-        default: "solutions",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -450,7 +450,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Environment",
         name: "schemaEnvironment",
         type: "string",
-        default: "cidp-test",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -717,7 +717,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Tenant",
         name: "catalogTenant",
         type: "string",
-        default: "solutions",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -729,7 +729,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Environment",
         name: "catalogEnvironment",
         type: "string",
-        default: "cidp-test",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -767,7 +767,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Tenant",
         name: "categoryTreeTenant",
         type: "string",
-        default: "solutions",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -779,7 +779,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Environment",
         name: "categoryTreeEnvironment",
         type: "string",
-        default: "cidp-test",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -846,7 +846,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Tenant",
         name: "localeTenant",
         type: "string",
-        default: "solutions",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -858,7 +858,7 @@ export class CrownpeakPD implements INodeType {
         displayName: "Environment",
         name: "localeEnvironment",
         type: "string",
-        default: "cidp-test",
+        default: "",
         required: true,
         displayOptions: {
           show: {
@@ -990,7 +990,7 @@ export class CrownpeakPD implements INodeType {
             const batchItems = this.getNodeParameter("batchItems", i) as IDataObject[];
 
             const url = `https://items.attraqt.io/batch-imports/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}&batch_id=${encodeURIComponent(batchId)}`;
-            
+
             const options: IHttpRequestOptions = {
               method: "POST",
               url,
@@ -1012,7 +1012,7 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
             const batchItems = this.getNodeParameter("batchItems", i) as IDataObject[];
-            
+
             const url = `https://items.attraqt.io/batch-imports/items?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
               method: "PATCH",
@@ -1035,7 +1035,7 @@ export class CrownpeakPD implements INodeType {
             const bearerToken = await getBearerToken(this);
             const batchId = this.getNodeParameter("batchId", i) as string;
             const batchItems = this.getNodeParameter("batchItems", i) as IDataObject[];
-            
+
             const url = `https://items.attraqt.io/batch-imports/items/delete?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}&fhrValidation=${fhrValidation}&batch_id=${encodeURIComponent(batchId)}`;
             const options: IHttpRequestOptions = {
               method: "POST",
@@ -1097,7 +1097,7 @@ export class CrownpeakPD implements INodeType {
             }
 
             let url = `https://items.attraqt.io/batch-imports/ingestions?tenant=${encodeURIComponent(tenant)}&environment=${encodeURIComponent(environment)}`;
-            
+
             if (typeof fhrValidation !== 'undefined') {
               url += `&fhrValidation=${fhrValidation}`;
             }
@@ -1591,7 +1591,7 @@ export class CrownpeakPD implements INodeType {
             const response = await this.helpers.request(options);
             const catalogVersion =
               response?.version || response?.catalogVersion || "unknown";
-            
+
             responseData = {
               ...response,
               defaultBatchId: catalogVersion,

@@ -40,7 +40,7 @@ This module is useful for organizations looking to build automated product onboa
 
 | Feature | Method | Endpoint | Description |
 |---------|--------|----------|-------------|
-| Get Token | POST | /auth/realms/solutions/protocol/openid-connect/token | Obtain authentication token |
+| Get Token | POST | /auth/realms/{tenantId}/protocol/openid-connect/token | Obtain authentication token |
 | Upsert Items | POST | /items | Create a new product item |
 | Patch Items | PATCH | /items | Update existing product item attributes |
 | Delete Items | DELETE | /items | Delete product item |
